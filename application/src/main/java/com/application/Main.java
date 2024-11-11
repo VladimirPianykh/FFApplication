@@ -19,10 +19,10 @@ public class Main{
 		// SALES_MANAGER,
 	}
 	// public static enum ApplicationFeature implements Feature{
-
+		
 	// }
 	// public static enum ApplicationPermission implements Permission{
-
+		
 	// }
 	static{
 		for(Role r:ApplicationRole.values())User.registeredRoles.add(r);

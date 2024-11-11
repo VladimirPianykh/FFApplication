@@ -24,18 +24,49 @@ import com.futurefactory.Data.Editable;
 import com.futurefactory.Data.Editable.ActionRecord;
 import com.futurefactory.HButton;
 import com.futurefactory.IEditor;
+import com.futurefactory.PathIcon;
 import com.futurefactory.Root;
 
 public class Editor extends JDialog implements IEditor{
     public Editor(){super(null,ModalityType.APPLICATION_MODAL);}
     public void constructEditor(Editable editable){
         Editor th=this;
+		Model m=editable==null?new Model("New model"):(Model)editable;
 		setSize(Root.SCREEN_SIZE);
 		setUndecorated(true);
+		setLayout(null);
         CardLayout layout=new CardLayout();
-		setContentPane(new JPanel(layout));
-		Model m=editable==null?new Model("New model"):(Model)editable;
-		JPanel tab1=new JPanel(null);
+		JPanel mainPanel=new JPanel(layout);
+		mainPanel.setBounds(0,0,getWidth(),getHeight());
+		PathIcon leftIcon=new PathIcon("ui/left.png",getHeight()/13,getHeight()/13),r=new PathIcon("ui/right.png",getHeight()/13,getHeight()/13);
+		HButton left=new HButton(10,7){
+			public void paintComponent(Graphics g){
+				Graphics2D g2=(Graphics2D)g;
+				int c=scale*5;
+				g2.setColor(new Color(c,pressed?c:c*2,c));
+				g2.fillRect(0,0,getWidth(),getHeight());
+				leftIcon.paintIcon(this,g2,(getWidth()-leftIcon.getIconWidth())/2,(getHeight()-leftIcon.getIconHeight())/2);
+			}
+		},right=new HButton(10,7){
+			public void paintComponent(Graphics g){
+				Graphics2D g2=(Graphics2D)g;
+				int c=scale*5;
+				g2.setColor(new Color(c,pressed?c:c*2,c));
+				g2.fillRect(0,0,getWidth(),getHeight());
+				r.paintIcon(this,g2,(getWidth()-r.getIconWidth())/2,(getHeight()-r.getIconHeight())/2);
+			}
+		};
+		left.setAction(new AbstractAction(){
+			public void actionPerformed(ActionEvent e){layout.previous(mainPanel);repaint();}
+		});
+		right.setAction(new AbstractAction(){
+			public void actionPerformed(ActionEvent e){layout.next(mainPanel);repaint();}
+		});
+		left.setBounds(getWidth()/100,getHeight()*4/5,getHeight()/10,getHeight()/10);
+		right.setBounds(getWidth()*99/100-getHeight()/10,getHeight()*4/5,getHeight()/10,getHeight()/10);
+		add(left);add(right);
+		add(mainPanel);
+		JPanel tab1=new JPanel(null),tab2=new JPanel(null);
 		JPanel history=new JPanel(null);
 		history.setPreferredSize(new Dimension(getWidth(),getHeight()*m.records.size()/4));
 		history.setOpaque(false);
@@ -124,8 +155,16 @@ public class Editor extends JDialog implements IEditor{
 			i++;
 		}
 		tab1.setBackground(new Color(102,107,89));
-		add(tab1,"tab1");
-		layout.show(getContentPane(),"tab1");
+		JLabel tab1Name=new JLabel("Logs");
+		tab1Name.setBounds(0,getHeight()*9/10,getWidth(),getHeight()/10);
+		tab1Name.setForeground(Color.BLACK);
+		tab1Name.setFont(new Font(Font.DIALOG,Font.BOLD,getHeight()/40));
+		tab1Name.setHorizontalAlignment(JLabel.CENTER);
+		tab1.add(tab1Name);
+		JLabel modelName=new JLabel();
+		mainPanel.add(tab1,"tab1");
+		mainPanel.add(tab2,"tab2");
+		layout.show(mainPanel,"tab1");
 		setVisible(true);
     }
 }
