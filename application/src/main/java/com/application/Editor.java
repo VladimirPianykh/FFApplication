@@ -35,7 +35,8 @@ public class Editor extends JDialog implements IEditor{
 		setUndecorated(true);
 		setLayout(null);
 		if(editable instanceof Editable/*TODO: insert customer type instead of `Editable` and uncomment line below*/){
-			// Customer m=editable==null?new Customer("Новый заказчик"):(Customer)editable;
+		}else{
+			// Order m=editable==null?new Order("Новый заказ"):(Order)editable;
 			Editable m=null;//DEBUG: remove
 			CardLayout layout=new CardLayout();
 			JPanel mainPanel=new JPanel(layout);
