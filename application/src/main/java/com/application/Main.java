@@ -2,10 +2,10 @@ package com.application;
 
 import com.futurefactory.ProgramStarter;
 import com.futurefactory.User;
-import com.futurefactory.User.DefaultPermission;
-import com.futurefactory.User.DefaultRole;
 import com.futurefactory.User.Permission;
 import com.futurefactory.User.Role;
+import com.futurefactory.defaults.DefaultPermission;
+import com.futurefactory.defaults.DefaultRole;
 
 public class Main{
 	public static enum ApplicationRole implements Role{
@@ -40,6 +40,7 @@ public class Main{
 		User.permissions.put(DefaultRole.EMPTY,new Permission[]{DefaultPermission.CREATE});
 	}
 	public static void main(String[]args){
+		ProgramStarter.welcomeMessage="Добро пожаловать в \"Лесозавод №10 Белка\".\nВойдите под логином и паролем вашей службы, чтобы продолжить.";
 		ProgramStarter.editor=new Editor();
 		ProgramStarter.runProgram();
 	}
