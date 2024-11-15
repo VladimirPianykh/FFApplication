@@ -12,12 +12,12 @@ public class ProductEditable extends Data.Editable {
         this.productType = productType;
     }
 
+    public ProductType getProductType() {
+        return this.productType;
+    }
+
     public void setProductType(ProductType productType) {
         this.productType = productType;
         this.records.add(new ActionRecord(":EDITED", User.getActiveUser()));
-    }
-
-    public ProductType getProductType() {
-        return this.productType;
     }
 }

@@ -6,5 +6,5 @@ enum OrderStatus {
     APPROVED, // Согласован клиентом
     IN_PRODUCTION, // Принят в производство
     COMPLETED, // Выполнен
-    DEFAULT;
+    DEFAULT
 }
