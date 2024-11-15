@@ -1,4 +1,10 @@
 package com.application.product;
 
-public record ProductType(String name) { //TODO: ask to never name fields with class's name
+import com.futurefactory.Data;
+
+//Про тип продукта тоже нужно только имя
+public class ProductType extends Data.Editable{
+	public ProductType(String name){
+		super(name);
+	}
 }
