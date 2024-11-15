@@ -1,14 +1,14 @@
-package com.application.product.type;
+package com.application.product;
 
 import com.futurefactory.Data;
 import com.futurefactory.User;
 
 //Про тип продукта тоже нужно только имя
-public class ProductEditable extends Data.Editable {
+public class Product extends Data.Editable {
     private ProductType productType;
 
-    public ProductEditable(ProductType productType) {
-        super(productType.productType());
+    public Product(ProductType productType) {
+        super(productType.name());
         this.productType = productType;
     }
 

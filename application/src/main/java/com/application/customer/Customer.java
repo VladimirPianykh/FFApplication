@@ -1,5 +1,12 @@
 package com.application.customer;
 
-//Я так понял клиент должен иметь только имя, под клиентом подразумевается компания
-public record Customer(String name) {
+import com.futurefactory.Data;
+
+public class Customer extends Data.Editable{
+	//Название компании
+	public Customer(String name){
+		super(name);
+	}
+	//TODO: explain `ActionRecord`s system.
+	// this.records.add(new ActionRecord(":EDITED", User.getActiveUser()));
 }

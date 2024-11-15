@@ -1,26 +1,11 @@
 package com.application.order;
 
-import com.application.customer.Customer;
-import com.application.product.type.ProductType;
+import com.futurefactory.Data;
 
-import java.time.LocalDate;
-
-public record Order(
-        LocalDate registrationDate,
-        LocalDate requiredDate,
-        Customer customerInfo,
-        ProductType productType,
-        int quantity,
-        String additionalInfo,
-        OrderStatus status
-) {
-    // Конструктор с проверкой
-    public Order {
-        if (!requiredDate.isAfter(registrationDate)) {
-            throw new IllegalArgumentException("Illegal date parameters");
-        }
-        if (status == null || status == OrderStatus.DEFAULT) {
-            status = OrderStatus.DRAFT; // Статус по умолчанию
-        }
-    }
+public class Order extends Data.Editable{
+	public OrderContext context; //TODO: ask for a bit less incapsulation
+	public Order(OrderContext context){
+		super(context.productType().name());
+		this.context = context;
+	}
 }
