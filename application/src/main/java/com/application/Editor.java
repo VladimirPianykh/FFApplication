@@ -28,9 +28,9 @@ import com.futurefactory.PathIcon;
 import com.futurefactory.Root;
 
 public class Editor extends JDialog implements IEditor{
-    public Editor(){super(null,ModalityType.APPLICATION_MODAL);}
-    public void constructEditor(Editable editable){
-        Editor th=this;
+	public Editor(){super(null,ModalityType.APPLICATION_MODAL);}
+	public void constructEditor(Editable editable){
+		Editor th=this;
 		setSize(Root.SCREEN_SIZE);
 		setUndecorated(true);
 		setLayout(null);
@@ -170,5 +170,5 @@ public class Editor extends JDialog implements IEditor{
 			layout.show(mainPanel,"tab1");
 			setVisible(true);
 		}
-    }
+	}
 }

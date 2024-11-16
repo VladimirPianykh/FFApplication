@@ -9,14 +9,9 @@ import com.futurefactory.defaults.DefaultRole;
 
 public class Main{
 	public static enum ApplicationRole implements Role{
-		// STOREKEEPER,
-		// ENGINEER,
-		// TESTER,
-		// PRODUCTION_MANAGER,
-		// PROCUREMENT_MANAGER,
-		// PD_MANAGER,
-		// SD_MANAGER,
-		// SALES_MANAGER,
+		COMMERCIAL,
+		PRODUCTION,
+		TECH,
 	}
 	// public static enum ApplicationFeature implements Feature{
 		
@@ -40,6 +35,7 @@ public class Main{
 		User.permissions.put(DefaultRole.EMPTY,new Permission[]{DefaultPermission.CREATE});
 	}
 	public static void main(String[]args){
+		//TODO: implement button highlight rendering
 		ProgramStarter.welcomeMessage="Добро пожаловать в \"Лесозавод №10 Белка\".\nВойдите под логином и паролем вашей службы, чтобы продолжить.";
 		ProgramStarter.editor=new Editor();
 		ProgramStarter.runProgram();
