@@ -11,12 +11,9 @@ import com.futurefactory.User.Role;
 import com.futurefactory.defaults.DefaultPermission;
 import com.futurefactory.defaults.DefaultRole;
 
+import java.util.Collections;
+
 public class Main{
-	public static enum ApplicationRole implements Role{
-		COMMERCIAL,
-		PRODUCTION,
-		TECH,
-	}
 	// public static enum ApplicationFeature implements Feature{
 		
 	// }
@@ -24,7 +21,7 @@ public class Main{
 		
 	// }
 	static{
-		for(Role r:ApplicationRole.values())User.registeredRoles.add(r);
+        Collections.addAll(User.registeredRoles, ApplicationRole.values());
 		// for(Feature f:ApplicationFeature.values())User.registeredFeatures.add(f);
 		//user features
 		// WorkFrame.ftrMap.put(DefaultRole.ENGINEER,new Feature[]{Feature.HISTORY,Feature.MODEL_EDITING});
@@ -37,6 +34,10 @@ public class Main{
 		// WorkFrame.ftrMap.put(DefaultRole.TESTER,new Feature[]{Feature.HISTORY,Feature.MODEL_EDITING});
 		//user permissions
 		User.permissions.put(DefaultRole.EMPTY,new Permission[]{DefaultPermission.CREATE});
+
+		for (ApplicationRole role : ApplicationRole.values()) {
+			User.permissions.put(role, role.permissions);
+		}
 	}
 	public static void main(String[]args){
 		EditableGroup e=new EditableGroup(
