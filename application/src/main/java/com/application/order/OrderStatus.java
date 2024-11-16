@@ -6,17 +6,13 @@ enum OrderStatus {
     DRAFT("Черновик"),
     APPROVED("Согласован клиентом"),
     IN_PRODUCTION("Принят в производство"),
-    COMPLETED("Выполнен"),
-    // не будет использоваться, его автоматически заменят на Черновик
-    DEFAULT("По умолчанию");
-    public final String toRussian;
+    COMPLETED("Выполнен");
+    public final String translation;
 
     OrderStatus(String translation) {
-        toRussian = translation;
+        this.translation=translation;
     }
 
     @Override
-    public String toString() {
-        return toRussian;
-    }
+    public String toString(){return translation;}
 }
