@@ -1,6 +1,10 @@
 package com.application;
 
+import com.futurefactory.Data;
+import com.futurefactory.Data.EditableGroup;
+import com.futurefactory.PathIcon;
 import com.futurefactory.ProgramStarter;
+import com.futurefactory.Root;
 import com.futurefactory.User;
 import com.futurefactory.User.Permission;
 import com.futurefactory.User.Role;
@@ -35,7 +39,12 @@ public class Main{
 		User.permissions.put(DefaultRole.EMPTY,new Permission[]{DefaultPermission.CREATE});
 	}
 	public static void main(String[]args){
-		//TODO: implement button highlight rendering
+		EditableGroup e=new EditableGroup(
+			new PathIcon("ui/client.png",Root.SCREEN_SIZE.width/10,Root.SCREEN_SIZE.width/10),
+			new PathIcon("ui/client_add.png",Root.SCREEN_SIZE.width/10,Root.SCREEN_SIZE.width/10)
+		);
+		//TODO: fill EditableGroup
+		Data.getInstance().editables.add(e);
 		ProgramStarter.welcomeMessage="Добро пожаловать в \"Лесозавод №10 Белка\".\nВойдите под логином и паролем вашей службы, чтобы продолжить.";
 		ProgramStarter.editor=new Editor();
 		ProgramStarter.runProgram();
