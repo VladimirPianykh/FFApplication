@@ -2,9 +2,11 @@ package com.application;
 
 import com.application.access.ApplicationRole;
 import com.application.customer.Customer;
+import com.application.editor.Editor;
 import com.application.order.Order;
 import com.application.product.ProductType;
 import com.futurefactory.Data;
+import com.futurefactory.Data.Editable;
 import com.futurefactory.Data.EditableGroup;
 import com.futurefactory.PathIcon;
 import com.futurefactory.ProgramStarter;
@@ -14,7 +16,11 @@ import com.futurefactory.User.Permission;
 import com.futurefactory.defaults.DefaultPermission;
 import com.futurefactory.defaults.DefaultRole;
 
+import java.awt.Color;
+import java.awt.Font;
 import java.util.Collections;
+
+import javax.swing.JButton;
 
 public class Main{
 	// public static enum ApplicationFeature implements Feature{
@@ -49,15 +55,26 @@ public class Main{
 		);
 		//TODO @VladimirPianykh: add new icons
 		EditableGroup<ProductType>productTypes=new EditableGroup<ProductType>(
-			new PathIcon("ui/customer.png",Root.SCREEN_SIZE.width/20,Root.SCREEN_SIZE.width/20),
-			new PathIcon("ui/customer_add.png",Root.SCREEN_SIZE.width/20,Root.SCREEN_SIZE.width/20),
+			new PathIcon("ui/product.png",Root.SCREEN_SIZE.width/20,Root.SCREEN_SIZE.width/20),
+			new PathIcon("ui/product_add.png",Root.SCREEN_SIZE.width/20,Root.SCREEN_SIZE.width/20),
 			ProductType.class
 		);
 		EditableGroup<Order>orders=new EditableGroup<Order>(
 			new PathIcon("ui/order.png",Root.SCREEN_SIZE.width/20,Root.SCREEN_SIZE.width/20),
 			new PathIcon("ui/order_add.png",Root.SCREEN_SIZE.width/20,Root.SCREEN_SIZE.width/20),
 			Order.class
-		);
+		){
+			public JButton createElementButton(Editable e,Font font){
+				JButton b=super.createElementButton(e, font);
+				b.setForeground(switch(((Order)e).status){
+					case APPROVED->Color.ORANGE;
+					case IN_PRODUCTION->Color.YELLOW;
+					case COMPLETED->Color.GREEN;
+					case DRAFT->b.getForeground();
+				});
+				return b;
+			}
+		};
 		Data.getInstance().editables.add(customers);
 		Data.getInstance().editables.add(productTypes);
 		Data.getInstance().editables.add(orders);
