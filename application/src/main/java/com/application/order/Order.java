@@ -34,7 +34,7 @@ public class Order extends Data.Editable {
 		this.status = status;
 	}
 	public Order(){
-		this(LocalDate.now().plusDays(3), new Customer(), new ProductType(),"","",OrderStatus.DRAFT);
+		this(LocalDate.now().plusDays(3), null, null,"","",OrderStatus.DRAFT);
 	}
 
 	@Override
