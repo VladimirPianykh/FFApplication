@@ -11,14 +11,15 @@ public class Order extends Data.Editable {
 	public LocalDate requiredDate;
 	public Customer customerInfo;
 	public ProductType productType;
-	public int quantity;
+	public String quantity;
 	public String additionalInfo;
 	public OrderStatus status;
 	public Order(
 		LocalDate requiredDate,
 		Customer customerInfo,
 		ProductType productType,
-		int quantity,
+		//Чтобы можно было писать 12 тонн и т.д.
+		String quantity,
 		String additionalInfo,
 		OrderStatus status
 	){
@@ -33,6 +34,11 @@ public class Order extends Data.Editable {
 		this.status = status;
 	}
 	public Order(){
-		this(LocalDate.now().plusDays(3),null,null,1,"",OrderStatus.DRAFT);
+		this(LocalDate.now().plusDays(3), new Customer(), new ProductType(),"","",OrderStatus.DRAFT);
+	}
+
+	@Override
+	public String toString() {
+		return name;
 	}
 }
