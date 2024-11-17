@@ -30,7 +30,7 @@ public class OrderEditor extends JPanel {
         JTextField quantityField = new JTextField(order.quantity);
         JTextArea additionalInfoField = new JTextArea(order.additionalInfo);
         JComboBox<OrderStatus> statusField = new JComboBox<>(OrderStatus.values());
-        statusField.setPrototypeDisplayValue(order.status);
+        statusField.setSelectedItem(order.status);
 
         // Устанавливаем переход по Enter
         setEnterKeyTraversal(registeredDateField, requiredDateField);
@@ -108,6 +108,7 @@ public class OrderEditor extends JPanel {
     public static void main(String[] args) {
         User.register("Boris", "123");
         Order order = new Order();
+        order.status = OrderStatus.APPROVED;
 
         JFrame frame = new JFrame("Смотрим как будет выглядеть");
         frame.setSize(1920, 1080);
