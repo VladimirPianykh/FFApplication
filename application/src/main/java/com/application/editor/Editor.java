@@ -1,4 +1,4 @@
-package com.application;
+package com.application.editor;
 
 import java.awt.BasicStroke;
 import java.awt.CardLayout;
@@ -68,22 +68,27 @@ public class Editor extends JDialog implements IEditor{
 		});
 		left.setBounds(getWidth()/100,getHeight()*4/5,getHeight()/10,getHeight()/10);
 		right.setBounds(getWidth()*99/100-getHeight()/10,getHeight()*4/5,getHeight()/10,getHeight()/10);
+		left.setFocusable(false);
+		right.setFocusable(false);
 		add(left);add(right);
 		add(mainPanel);
+		JTextField nameField=new JTextField(editable.name);
+		nameField.setBounds(getWidth()/5,getHeight()/100,getWidth()*3/5,getHeight()/10);
+		nameField.setFont(new Font(Font.DIALOG,Font.PLAIN,nameField.getHeight()*2/3));
+		nameField.setBackground(Color.DARK_GRAY);
+		nameField.setForeground(Color.LIGHT_GRAY);
 		if(editable instanceof Order){
-			Order m=editable==null?new Order():(Order)editable;
-			JPanel tab1=new JPanel(null),tab2=new JPanel(null);
-			tab1.setBackground(new Color(102,107,89));
-			tab2.setBackground(tab1.getBackground());
+			JPanel tab2=new JPanel(null);
+			tab2.setBackground(new Color(102,107,89));
 			JPanel history=new JPanel(null);
-			history.setPreferredSize(new Dimension(getWidth(),getHeight()*m.records.size()/4));
+			history.setPreferredSize(new Dimension(getWidth(),getHeight()*editable.records.size()/4));
 			history.setOpaque(false);
 			JScrollPane s=new JScrollPane(history,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 			s.setSize(getWidth(),getHeight()*3/4);
 			s.getViewport().setBackground(new Color(19,31,19));
 			s.getVerticalScrollBar().setOpaque(false);
 			s.getVerticalScrollBar().setUnitIncrement(getHeight()/30);
-			tab1.add(s);
+			tab2.add(s);
 			class LocalComment extends HButton{
 				private static final float[]f={0,0.4f,0.5f,0.6f,1};
 				private static final Color[]c1={new Color(44,66,65),new Color(47,77,75),new Color(58,97,94),new Color(47,77,75),new Color(44,66,65)};
@@ -148,49 +153,37 @@ public class Editor extends JDialog implements IEditor{
 						g2.setColor(new Color(0,0,0,scale*5));
 						g2.fillRoundRect(0,0,getWidth(),getHeight(),h,h);
 						g2.setColor(new Color(255,255,255,scale*10));
-						g2.drawString("Click to copy.",(getWidth()-fm.stringWidth("Click to copy."))/2,(getHeight()+fm.getAscent()+fm.getLeading()-fm.getDescent())*3/4);
+						g2.drawString("Нажмите, чтобы скопировать.",(getWidth()-fm.stringWidth("Нажмите, чтобы скопировать."))/2,(getHeight()+fm.getAscent()+fm.getLeading()-fm.getDescent())*3/4);
 					}
 				}
 			}
 			int i=0;
-			if(m.records.isEmpty()){
+			if(editable.records.isEmpty()){
 				JLabel l=new JLabel("Записи пусты.");
 				l.setBounds(0,0,getWidth(),getHeight());
 				l.setFont(new Font(Font.DIALOG,Font.BOLD,getHeight()/10));
 				history.add(l);
-			}else for(ActionRecord c:m.records){
+			}else for(ActionRecord c:editable.records){
 				history.add(new LocalComment(c,i));
 				i++;
 			}
-			JLabel tab1Name=new JLabel("Записи");
-			tab1Name.setBounds(0,getHeight()*9/10,getWidth(),getHeight()/10);
-			tab1Name.setForeground(Color.BLACK);
-			tab1Name.setFont(new Font(Font.DIALOG,Font.BOLD,getHeight()/40));
-			tab1Name.setHorizontalAlignment(JLabel.CENTER);
-			tab1.add(tab1Name);
-			JTextField orderName=new JTextField(m.name);
-			orderName.setBounds(getWidth()/5,getHeight()/100,getWidth()*3/5,getHeight()/10);
-			orderName.setFont(new Font(Font.DIALOG,Font.PLAIN,orderName.getHeight()*2/3));
-			orderName.setBackground(Color.DARK_GRAY);
-			orderName.setForeground(Color.LIGHT_GRAY);
-			tab2.add(orderName);
-			//TODO @borisaushev: создать редактируемый компонент для каждого из полей заказа.
-			/*
-			 * Пиши прямо здесь (сразу после "Todo"), добавляй их на tab2.
-			 * - При нажатии на Enter фокус должен быть передан следующему компоненту.
-			 * - Не забудь задать каждому компоненту положение (bounds) относительно ширины и высоты редактора.
-			 */
-			mainPanel.add(tab1,"tab1");
+			JLabel tab2Name=new JLabel("Записи");
+			tab2Name.setBounds(0,getHeight()*9/10,getWidth(),getHeight()/10);
+			tab2Name.setForeground(Color.BLACK);
+			tab2Name.setFont(new Font(Font.DIALOG,Font.BOLD,getHeight()/40));
+			tab2Name.setHorizontalAlignment(JLabel.CENTER);
+			tab2.add(tab2Name);
+			new OrderEditor((Order)editable,mainPanel).add(nameField);
 			mainPanel.add(tab2,"tab2");
-			layout.show(mainPanel,"tab2");
-			orderName.requestFocusInWindow();
-			orderName.setSelectionStart(0);
-			orderName.setSelectionEnd(orderName.getText().length());
 		}else if(editable instanceof Customer){
-			throw new UnsupportedOperationException("Customer is not supported");
+			new CustomerEditor((Customer)editable,mainPanel).add(nameField);
 		}else if(editable instanceof ProductType){
-			throw new UnsupportedOperationException("ProductType is not supported");
+			new ProductEditor((ProductType)editable,mainPanel).add(nameField);
 		}else throw new IllegalArgumentException();
+		layout.show(mainPanel,"tab1");
+		nameField.requestFocusInWindow();
+		nameField.setSelectionStart(0);
+		nameField.setSelectionEnd(nameField.getText().length());
 		setVisible(true);
 	}
 }
