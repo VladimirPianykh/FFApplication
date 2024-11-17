@@ -1,7 +1,11 @@
 package com.application.editor;
 
+import com.application.customer.Customer;
 import com.application.order.Order;
 import com.application.order.OrderStatus;
+import com.futurefactory.Data;
+import com.futurefactory.Data.EditableGroup;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -61,6 +65,7 @@ public class OrderEditor extends JPanel {
 				OrderStatus status = (OrderStatus) statusField.getSelectedItem();
 				//TODO @borisaushev: обработать результат
 				order.requiredDate=requiredDate; //Поля сохраняются вот так.
+				// for(EditableGroup<?>e:Data.getInstance().editables)if(e.type==Customer.class) //Вот так можно получить список клиентов.
 				// new Customer(customerInfo) //Никаких новых клиентов, их нужно получить из списка зарегистрированных.
 				// new ProductType(productTypeName)
 				// quantity,
