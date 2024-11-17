@@ -113,7 +113,7 @@ public class OrderEditor extends JPanel {
                 }
 
                 //Валидируем
-                if (status == OrderStatus.APPROVED && (customer == null || productType == null || quantity.isEmpty())) {
+                if (status == OrderStatus.APPROVED && (customerInfo.isEmpty() || productTypeName.isEmpty() || quantity.isEmpty())) {
                     //используем html чтобы все уместилось
                     resultLabel.setText("<html>Укажите информацию о клиенте,<br>" +
                             "вид лесопродукции и количество заказываемой лесопродукции</html>");
@@ -145,7 +145,7 @@ public class OrderEditor extends JPanel {
         });
 
         setLayout(null);
-        tempPanel.setBounds(getWidth() / 90, getHeight() / 90, getWidth() / 2, getHeight() / 2);
+        tempPanel.setBounds(getWidth() / 8, getHeight() / 8, getWidth() / 2, getHeight() / 2);
         add(tempPanel);
 
         parent.add(this, "tab1");
