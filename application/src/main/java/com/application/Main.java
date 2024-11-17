@@ -1,5 +1,6 @@
 package com.application;
 
+import com.application.access.ApplicationPermission;
 import com.application.access.ApplicationRole;
 import com.application.customer.Customer;
 import com.application.editor.Editor;
@@ -12,6 +13,7 @@ import com.futurefactory.PathIcon;
 import com.futurefactory.ProgramStarter;
 import com.futurefactory.Root;
 import com.futurefactory.User;
+import com.futurefactory.WorkFrame;
 import com.futurefactory.User.Permission;
 import com.futurefactory.defaults.DefaultPermission;
 import com.futurefactory.defaults.DefaultRole;
@@ -26,11 +28,9 @@ public class Main{
 	// public static enum ApplicationFeature implements Feature{
 		
 	// }
-	// public static enum ApplicationPermission implements Permission{
-		
-	// }
 	static{
         Collections.addAll(User.registeredRoles,ApplicationRole.values());
+        Collections.addAll(User.registeredPermissions,ApplicationPermission.values());
 		// for(Feature f:ApplicationFeature.values())User.registeredFeatures.add(f);
 		//user features
 		// WorkFrame.ftrMap.put(DefaultRole.ENGINEER,new Feature[]{Feature.HISTORY,Feature.MODEL_EDITING});
@@ -42,24 +42,23 @@ public class Main{
 		// WorkFrame.ftrMap.put(DefaultRole.STOREKEEPER,new Feature[]{Feature.HISTORY,Feature.MODEL_EDITING});
 		// WorkFrame.ftrMap.put(DefaultRole.TESTER,new Feature[]{Feature.HISTORY,Feature.MODEL_EDITING});
 		//user permissions
-		User.permissions.put(DefaultRole.EMPTY,new Permission[]{DefaultPermission.CREATE});
-		for (ApplicationRole role : ApplicationRole.values()) {
-			User.permissions.put(role, role.permissions);
-		}
 	}
 	public static void main(String[]args){
 		Data d=Data.getInstance();
 		EditableGroup<Customer>customers=null;
 		EditableGroup<ProductType>productTypes=null;
 		EditableGroup<Order>orders=null;
-		boolean firstLaunch=d.editables.isEmpty();
+		boolean firstLaunch=User.getUserCount()==0;
 		if(firstLaunch){
+			//Регистрация служб
+			User.register("Коммерческая служба","pass").role=ApplicationRole.COMMERCIAL_SERVICE;
+			User.register("Служба производства","pass").role=ApplicationRole.PRODUCTION_SERVICE;
+			User.register("Служба технолога","pass").role=ApplicationRole.TECH_SERVICE;
 			customers=new EditableGroup<Customer>(
 				new PathIcon("ui/customer.png",Root.SCREEN_SIZE.width/20,Root.SCREEN_SIZE.width/20),
 				new PathIcon("ui/customer_add.png",Root.SCREEN_SIZE.width/20,Root.SCREEN_SIZE.width/20),
 				Customer.class
 			);
-			//TODO @VladimirPianykh: add new icons
 			productTypes=new EditableGroup<ProductType>(
 				new PathIcon("ui/product.png",Root.SCREEN_SIZE.width/20,Root.SCREEN_SIZE.width/20),
 				new PathIcon("ui/product_add.png",Root.SCREEN_SIZE.width/20,Root.SCREEN_SIZE.width/20),
@@ -85,7 +84,8 @@ public class Main{
 			d.editables.add(productTypes);
 			d.editables.add(orders);
 		}
-		ProgramStarter.welcomeMessage="Добро пожаловать в \"Лесозавод №10 Белка\".\nВойдите под логином и паролем вашей службы, чтобы продолжить.";
+		ProgramStarter.welcomeMessage="Добро пожаловать в \"Лесозавод №10 Белка\".\nВыберите службу, чтобы продолжить.";
+		ProgramStarter.authRequired=false;
 		ProgramStarter.editor=new Editor();
 		ProgramStarter.runProgram();
 		if(firstLaunch){

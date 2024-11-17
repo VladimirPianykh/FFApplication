@@ -1,46 +1,33 @@
 package com.application.access;
 
 import com.futurefactory.User;
+import com.futurefactory.User.Permission;
+import com.futurefactory.defaults.DefaultFeature;
+import com.futurefactory.WorkFrame;
 
-/**
- * Невнятное тз:
- * Создать объект для регистрации заказа от клиента на лесопродукцию.
- * Заказы на лесопродукцию должны быть доступны сотрудникам коммерческой службы,
- * сотрудникам службы производства.
- * <p>
- * А выше написано:
- * - Коммерческая служба принимает заказы от покупателей на разные виды лесопродукции.
- * - Задача службы производства – диспетчеризация и выпуск лесопродукции.
- * <p>
- * Не ясно можно ли создавать заказы продуктовой службе
- */
 public enum ApplicationRole implements User.Role {
-    COMMERCIAL_SERVICE(new ApplicationPermission[]{
-            ApplicationPermission.CREATE_ORDER,
-            ApplicationPermission.GET_ORDERS_INFO,
-            ApplicationPermission.GET_PRODUCT_TYPES_INFO,
-            ApplicationPermission.GET_CLIENT_INFO
-    }),
-    PRODUCTION_SERVICE(new ApplicationPermission[]{
-            ApplicationPermission.CREATE_ORDER,
-            ApplicationPermission.GET_ORDERS_INFO,
-            ApplicationPermission.GET_PRODUCT_TYPES_INFO,
-    }),
-    TECH_SERVICE(new ApplicationPermission[]{
-            ApplicationPermission.GET_PRODUCT_TYPES_INFO
-    });
-    // STOREKEEPER,
-    // ENGINEER,
-    // TESTER,
-    // PRODUCTION_MANAGER,
-    // PROCUREMENT_MANAGER,
-    // PD_MANAGER,
-    // SD_MANAGER,
-    // SALES_MANAGER,
+	COMMERCIAL_SERVICE(
+		new ApplicationPermission[]{
+			ApplicationPermission.CREATE_ORDER,
+			ApplicationPermission.READ_ORDER,
+			ApplicationPermission.READ_PRODUCTTYPE,
+			ApplicationPermission.READ_CUSTOMER
+		},new User.Feature[]{DefaultFeature.HISTORY,DefaultFeature.MODEL_EDITING}
+	),
+	PRODUCTION_SERVICE(
+		new ApplicationPermission[]{
+			ApplicationPermission.READ_ORDER,
+			ApplicationPermission.READ_PRODUCTTYPE,
+		},new User.Feature[]{DefaultFeature.HISTORY,DefaultFeature.MODEL_EDITING}
+	),
+	TECH_SERVICE(
+		new ApplicationPermission[]{
+			ApplicationPermission.READ_PRODUCTTYPE
+		},new User.Feature[]{DefaultFeature.HISTORY,DefaultFeature.MODEL_EDITING}
+	);
 
-    public final ApplicationPermission[] permissions;
-
-    ApplicationRole(ApplicationPermission[] permissions) {
-        this.permissions = permissions;
-    }
+	ApplicationRole(Permission[]permissions,User.Feature[]features){
+		User.permissions.put(this,permissions);
+		WorkFrame.ftrMap.put(this,new User.Feature[]{DefaultFeature.HISTORY,DefaultFeature.MODEL_EDITING});
+	}
 }

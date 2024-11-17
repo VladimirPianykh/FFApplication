@@ -2,9 +2,11 @@ package com.application.access;
 
 import com.futurefactory.User;
 
-public enum ApplicationPermission implements User.Permission {
+public enum ApplicationPermission implements User.Permission{
     CREATE_ORDER,
-    GET_ORDERS_INFO,
-    GET_PRODUCT_TYPES_INFO,
-    GET_CLIENT_INFO
+    CREATE_PRODUCTTYPE,
+    CREATE_CUSTOMER,
+    READ_ORDER,
+    READ_PRODUCTTYPE,
+    READ_CUSTOMER
 }
