@@ -173,7 +173,11 @@ public class Editor extends JDialog implements IEditor{
 			tab2Name.setFont(new Font(Font.DIALOG,Font.BOLD,getHeight()/40));
 			tab2Name.setHorizontalAlignment(JLabel.CENTER);
 			tab2.add(tab2Name);
-			new OrderEditor((Order)editable,mainPanel).add(nameField);
+			//я так понял надо добавлять на tab2
+			//было: new OrderEditor((Order)editable,mainPanel).add(nameField);
+			//TODO: поправить если надо
+			new OrderEditor((Order)editable,tab2).add(nameField);
+
 			mainPanel.add(tab2,"tab2");
 		}else if(editable instanceof Customer){
 			new CustomerEditor((Customer)editable,mainPanel).add(nameField);
