@@ -37,7 +37,7 @@ public class OrderEditor extends JPanel {
 
         JPanel tempPanel = new JPanel();
         GridLayout layout = new GridLayout(0, 2);
-        layout.setVgap(parent.getHeight() / 100);
+        layout.setVgap(getHeight() / 100); //Можно просто `getHeight()`, ибо выше стоит `setSize(parent.getSize()).
         tempPanel.setLayout(layout);
 
         // Метки для полей
@@ -79,13 +79,14 @@ public class OrderEditor extends JPanel {
                 OrderStatus status = (OrderStatus) statusField.getSelectedItem();
 
                 /*
+                 * TODO @borisaushev: использовать JComboBox<Client> и JComboBox<ProductType>
                  * Недочет:
                  * Нам приходится сравнивать информацию о клиентах с уже существующими,
                  * А что делать если такого клиента нет?
                  * Делать нового?
                  * Тогда мы вместе с созданием заказа создаем еще и клиента
                  * Что немного странно
-                 * */
+                 */
                 Customer customer = null;
                 outer:
                 for (Data.EditableGroup<?> group : Data.getInstance().editables) {
@@ -145,15 +146,17 @@ public class OrderEditor extends JPanel {
         });
 
         setLayout(null);
-        tempPanel.setBounds(getWidth() / 90, getHeight() / 90, getWidth() / 2, getHeight() / 2);
+        /*
+         * Тут надо подбирать отношение, периодически запуская приложение и
+         * проверяя (для этого надо зайти за коммерческую службу и создать новый заказ),
+         * всё ли нормально выглядит.
+         */
+        tempPanel.setBounds(getWidth()/90,getHeight()/50, getWidth() / 2, getHeight() / 2);
         add(tempPanel);
 
         parent.add(this, "tab1");
     }
 
-    /**
-     * Настройка перехода фокуса на следующее поле при нажатии Enter.
-     */
     private void setEnterKeyTraversal(JComponent c) {
         c.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "transfer");
         c.getActionMap().put("transfer", new AbstractAction() {

@@ -13,11 +13,6 @@ import com.futurefactory.PathIcon;
 import com.futurefactory.ProgramStarter;
 import com.futurefactory.Root;
 import com.futurefactory.User;
-import com.futurefactory.WorkFrame;
-import com.futurefactory.User.Permission;
-import com.futurefactory.defaults.DefaultPermission;
-import com.futurefactory.defaults.DefaultRole;
-
 import java.awt.Color;
 import java.awt.Font;
 import java.util.Collections;
