@@ -114,7 +114,7 @@ public class OrderEditor extends JPanel {
                 }
 
                 //Валидируем
-                if (status == OrderStatus.APPROVED && (customer == null || productType == null || quantity.isEmpty())) {
+                if (status == OrderStatus.APPROVED && (customerInfo.isEmpty() || productTypeName.isEmpty() || quantity.isEmpty())) {
                     //используем html чтобы все уместилось
                     resultLabel.setText("<html>Укажите информацию о клиенте,<br>" +
                             "вид лесопродукции и количество заказываемой лесопродукции</html>");
