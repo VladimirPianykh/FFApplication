@@ -48,38 +48,56 @@ public class Main{
 		}
 	}
 	public static void main(String[]args){
-		EditableGroup<Customer>customers=new EditableGroup<Customer>(
-			new PathIcon("ui/customer.png",Root.SCREEN_SIZE.width/20,Root.SCREEN_SIZE.width/20),
-			new PathIcon("ui/customer_add.png",Root.SCREEN_SIZE.width/20,Root.SCREEN_SIZE.width/20),
-			Customer.class
-		);
-		//TODO @VladimirPianykh: add new icons
-		EditableGroup<ProductType>productTypes=new EditableGroup<ProductType>(
-			new PathIcon("ui/product.png",Root.SCREEN_SIZE.width/20,Root.SCREEN_SIZE.width/20),
-			new PathIcon("ui/product_add.png",Root.SCREEN_SIZE.width/20,Root.SCREEN_SIZE.width/20),
-			ProductType.class
-		);
-		EditableGroup<Order>orders=new EditableGroup<Order>(
-			new PathIcon("ui/order.png",Root.SCREEN_SIZE.width/20,Root.SCREEN_SIZE.width/20),
-			new PathIcon("ui/order_add.png",Root.SCREEN_SIZE.width/20,Root.SCREEN_SIZE.width/20),
-			Order.class
-		){
-			public JButton createElementButton(Editable e,Font font){
-				JButton b=super.createElementButton(e, font);
-				b.setForeground(switch(((Order)e).status){
-					case APPROVED->Color.ORANGE;
-					case IN_PRODUCTION->Color.YELLOW;
-					case COMPLETED->Color.GREEN;
-					case DRAFT->b.getForeground();
-				});
-				return b;
-			}
-		};
-		Data.getInstance().editables.add(customers);
-		Data.getInstance().editables.add(productTypes);
-		Data.getInstance().editables.add(orders);
+		Data d=Data.getInstance();
+		EditableGroup<Customer>customers=null;
+		EditableGroup<ProductType>productTypes=null;
+		EditableGroup<Order>orders=null;
+		boolean firstLaunch=d.editables.isEmpty();
+		if(firstLaunch){
+			customers=new EditableGroup<Customer>(
+				new PathIcon("ui/customer.png",Root.SCREEN_SIZE.width/20,Root.SCREEN_SIZE.width/20),
+				new PathIcon("ui/customer_add.png",Root.SCREEN_SIZE.width/20,Root.SCREEN_SIZE.width/20),
+				Customer.class
+			);
+			//TODO @VladimirPianykh: add new icons
+			productTypes=new EditableGroup<ProductType>(
+				new PathIcon("ui/product.png",Root.SCREEN_SIZE.width/20,Root.SCREEN_SIZE.width/20),
+				new PathIcon("ui/product_add.png",Root.SCREEN_SIZE.width/20,Root.SCREEN_SIZE.width/20),
+				ProductType.class
+			);
+			orders=new EditableGroup<Order>(
+				new PathIcon("ui/order.png",Root.SCREEN_SIZE.width/20,Root.SCREEN_SIZE.width/20),
+				new PathIcon("ui/order_add.png",Root.SCREEN_SIZE.width/20,Root.SCREEN_SIZE.width/20),
+				Order.class
+			){
+				public JButton createElementButton(Editable e,Font font){
+					JButton b=super.createElementButton(e, font);
+					b.setForeground(switch(((Order)e).status){
+						case APPROVED->Color.ORANGE;
+						case IN_PRODUCTION->Color.YELLOW;
+						case COMPLETED->Color.GREEN;
+						case DRAFT->b.getForeground();
+					});
+					return b;
+				}
+			};
+			d.editables.add(customers);
+			d.editables.add(productTypes);
+			d.editables.add(orders);
+		}
 		ProgramStarter.welcomeMessage="Добро пожаловать в \"Лесозавод №10 Белка\".\nВойдите под логином и паролем вашей службы, чтобы продолжить.";
 		ProgramStarter.editor=new Editor();
 		ProgramStarter.runProgram();
+		if(firstLaunch){
+			//Ввод тестовых данных
+			productTypes.add(new ProductType("Сырые пиломатериалы"));
+			productTypes.add(new ProductType("Сухие пиломатериалы"));
+			productTypes.add(new ProductType("Строганные доски"));
+			productTypes.add(new ProductType("Рейки"));
+			productTypes.add(new ProductType("Брус"));
+			productTypes.add(new ProductType("Пеллеты"));
+			customers.add(new Customer("Boris Aushev"));
+			customers.add(new Customer("Vladimir Pianykh"));
+		}
 	}
 }

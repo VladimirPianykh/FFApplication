@@ -11,7 +11,7 @@ public class OrderEditor extends JPanel{
     public OrderEditor(Order e,Container parent){
         setSize(parent.getSize());
         setBackground(new Color(102,107,89));
-        //TODO @borisaushev: создать редактируемый компонент для каждого из полей заказа и кнопку "готово".
+        //TODO @borisaushev: создать редактируемый компонент для каждого из полей заказа.
 		/*
 		 * Пиши прямо здесь (сразу после "Todo"), добавляй их на tab2.
 		 * - При нажатии на Enter фокус должен быть передан следующему компоненту.
