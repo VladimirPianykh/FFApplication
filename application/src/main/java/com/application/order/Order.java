@@ -11,7 +11,7 @@ public class Order extends Data.Editable {
 	public LocalDate requiredDate;
 	public Customer customerInfo;
 	public ProductType productType;
-	public String quantity;
+	public int quantity;
 	public String additionalInfo;
 	public OrderStatus status;
 	public Order(
@@ -19,7 +19,7 @@ public class Order extends Data.Editable {
 		Customer customerInfo,
 		ProductType productType,
 		//Чтобы можно было писать 12 тонн и т.д.
-		String quantity,
+		int quantity,
 		String additionalInfo,
 		OrderStatus status
 	){
@@ -34,7 +34,7 @@ public class Order extends Data.Editable {
 		this.status = status;
 	}
 	public Order(){
-		this(LocalDate.now().plusDays(3), null, null,"","",OrderStatus.DRAFT);
+		this(LocalDate.now().plusDays(3),null,null,1,"",OrderStatus.DRAFT);
 	}
 
 	@Override

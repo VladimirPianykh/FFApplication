@@ -5,16 +5,23 @@ import com.application.access.ApplicationRole;
 import com.application.customer.Customer;
 import com.application.editor.Editor;
 import com.application.order.Order;
+import com.application.order.OrderStatus;
 import com.application.product.ProductType;
 import com.futurefactory.Data;
 import com.futurefactory.Data.Editable;
 import com.futurefactory.Data.EditableGroup;
+import com.futurefactory.HButton;
 import com.futurefactory.PathIcon;
 import com.futurefactory.ProgramStarter;
 import com.futurefactory.Root;
 import com.futurefactory.User;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.GradientPaint;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.time.LocalDate;
 import java.util.Collections;
 
 import javax.swing.JButton;
@@ -65,14 +72,25 @@ public class Main{
 				Order.class
 			){
 				public JButton createElementButton(Editable e,Font font){
-					JButton b=super.createElementButton(e, font);
-					b.setForeground(switch(((Order)e).status){
-						case APPROVED->Color.ORANGE;
-						case IN_PRODUCTION->Color.YELLOW;
-						case COMPLETED->Color.GREEN;
-						case DRAFT->b.getForeground();
-					});
-					return b;
+					return new HButton(){
+						public void paint(Graphics g){
+							Graphics2D g2=(Graphics2D)g;
+							g2.setColor(switch(((Order)e).status){
+								case APPROVED->Color.ORANGE;
+								case IN_PRODUCTION->Color.YELLOW;
+								case COMPLETED->Color.GREEN;
+								case DRAFT->Color.GRAY;
+							});
+							g2.fillRect(0,0,getWidth(),getHeight());
+							g2.setFont(font);
+							FontMetrics fm=g2.getFontMetrics();
+							g2.setColor(Color.BLACK);
+							g2.drawString(e.name,getWidth()/100,(getHeight()+fm.getAscent()+fm.getLeading()-fm.getDescent())/2);
+							elementIcon.paintIcon(this,g2,getWidth()-elementIcon.getIconWidth(),0);
+							g2.setColor(new Color(0,0,0,scale*10));
+							g2.fillRect(0,0,getWidth(),getHeight());
+						}
+					};
 				}
 			};
 			d.editables.add(customers);
@@ -87,12 +105,15 @@ public class Main{
 			//Ввод тестовых данных
 			productTypes.add(new ProductType("Сырые пиломатериалы"));
 			productTypes.add(new ProductType("Сухие пиломатериалы"));
-			productTypes.add(new ProductType("Строганные доски"));
 			productTypes.add(new ProductType("Рейки"));
+			productTypes.add(new ProductType("Строганные доски"));
 			productTypes.add(new ProductType("Брус"));
 			productTypes.add(new ProductType("Пеллеты"));
 			customers.add(new Customer("Boris Aushev"));
 			customers.add(new Customer("Vladimir Pianykh"));
+			orders.add(new Order(LocalDate.now(),customers.get(0),productTypes.get(0),3,"",OrderStatus.APPROVED));
+			orders.add(new Order(LocalDate.now(),customers.get(1),productTypes.get(1),3,"",OrderStatus.APPROVED));
+			orders.add(new Order(LocalDate.now(),customers.get(1),productTypes.get(2),3,"",OrderStatus.APPROVED));
 		}
 	}
 }

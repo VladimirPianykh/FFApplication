@@ -16,6 +16,7 @@ import java.awt.event.ActionEvent;
 import java.time.format.DateTimeFormatter;
 
 import javax.swing.AbstractAction;
+import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -72,6 +73,10 @@ public class Editor extends JDialog implements IEditor{
 		right.setFocusable(false);
 		add(left);add(right);
 		add(mainPanel);
+		JButton ok=new JButton();
+		ok.setBounds(getWidth()*2/5,getHeight()*9/10,getWidth()/5,getHeight()/20);
+		ok.setText("Готово");
+		ok.addActionListener(e->dispose());
 		JTextField nameField=new JTextField(editable.name);
 		nameField.setBounds(getWidth()/5,getHeight()/100,getWidth()*3/5,getHeight()/10);
 		nameField.setFont(new Font(Font.DIALOG,Font.PLAIN,nameField.getHeight()*2/3));
@@ -173,13 +178,18 @@ public class Editor extends JDialog implements IEditor{
 			tab2Name.setFont(new Font(Font.DIALOG,Font.BOLD,getHeight()/40));
 			tab2Name.setHorizontalAlignment(JLabel.CENTER);
 			tab2.add(tab2Name);
-			new OrderEditor((Order)editable,mainPanel).add(nameField);
-
+			OrderEditor tab1=new OrderEditor((Order)editable,mainPanel);
+			tab1.add(nameField);
+			tab1.add(ok);
 			mainPanel.add(tab2,"tab2");
 		}else if(editable instanceof Customer){
-			new CustomerEditor((Customer)editable,mainPanel).add(nameField);
+			CustomerEditor tab1=new CustomerEditor((Customer)editable,mainPanel);
+			tab1.add(nameField);
+			tab1.add(ok);
 		}else if(editable instanceof ProductType){
-			new ProductEditor((ProductType)editable,mainPanel).add(nameField);
+			ProductEditor tab1=new ProductEditor((ProductType)editable,mainPanel);
+			tab1.add(nameField);
+			tab1.add(ok);
 		}else throw new IllegalArgumentException();
 		layout.show(mainPanel,"tab1");
 		nameField.requestFocusInWindow();
