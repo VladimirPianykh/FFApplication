@@ -21,12 +21,43 @@ public class OrderEditor extends JPanel {
         // Поля формы
         JTextField registeredDateField = new JTextField(order.registrationDate.toString()),
                 requiredDateField = new JTextField(order.requiredDate.toString()),
-                customerInfoField = new JTextField(order.customerInfo == null ? "" : order.customerInfo.toString()),
-                productTypeField = new JTextField(order.productType == null ? "" : order.productType.toString()),
                 quantityField = new JTextField(order.quantity);
         JTextArea additionalInfoField = new JTextArea(order.additionalInfo);
         JComboBox<OrderStatus> statusField = new JComboBox<>(OrderStatus.values());
         statusField.setSelectedItem(order.status);
+
+        Data.EditableGroup<Customer> customers = null;
+        for (Data.EditableGroup<?> group : Data.getInstance().editables)
+            if (group.type == Customer.class)
+                customers = (Data.EditableGroup<Customer>) group;
+
+        Data.EditableGroup<ProductType> productTypes = null;
+        for (Data.EditableGroup<?> group : Data.getInstance().editables)
+            if (group.type == ProductType.class)
+                productTypes = (Data.EditableGroup<ProductType>) group;
+
+        Customer[] customersArray = new Customer[0];
+        if (customers != null) {
+            customersArray = new Customer[customers.size()];
+            for (int i = 0; i < customersArray.length; i++)
+                customersArray[i] = customers.get(i);
+        }
+
+        ProductType[] productTypeArray = new ProductType[0];
+        if (productTypes != null) {
+            productTypeArray = new ProductType[productTypes.size()];
+            for (int i = 0; i < productTypeArray.length; i++)
+                productTypeArray[i] = productTypes.get(i);
+        }
+
+        JComboBox<Customer> customerInfoField = new JComboBox<>(customersArray);
+        if (order.customerInfo != null) {
+            customerInfoField.setSelectedItem(order.customerInfo);
+        }
+        JComboBox<ProductType> productTypeField = new JComboBox<>(productTypeArray);
+        if (order.productType != null) {
+            productTypeField.setSelectedItem(order.productType);
+        }
 
         // Устанавливаем переход по Enter
         setEnterKeyTraversal(registeredDateField);
@@ -72,8 +103,9 @@ public class OrderEditor extends JPanel {
                     resultLabel.setText("Ошибка в формате даты");
                     return;
                 }
-                String customerInfo = customerInfoField.getText();
-                String productTypeName = productTypeField.getText();
+
+                Customer customer = (Customer) customerInfoField.getSelectedItem();
+                ProductType productType = (ProductType) productTypeField.getSelectedItem();
                 String quantity = quantityField.getText();
                 String additionalInfo = additionalInfoField.getText();
                 OrderStatus status = (OrderStatus) statusField.getSelectedItem();
@@ -81,53 +113,18 @@ public class OrderEditor extends JPanel {
                 /*
                  * TODO @borisaushev: использовать JComboBox<Client> и JComboBox<ProductType>
                  * Недочет:
-                 * Нам приходится сравнивать информацию о клиентах с уже существующими,
-                 * А что делать если такого клиента нет?
-                 * Делать нового?
-                 * Тогда мы вместе с созданием заказа создаем еще и клиента
-                 * Что немного странно
-                 */
-                Customer customer = null;
-                outer:
-                for (Data.EditableGroup<?> group : Data.getInstance().editables) {
-                    if (group.type == Customer.class) {
-                        for (Data.Editable editable : group) {
-                            if (editable.name.equals(customerInfo)) {
-                                customer = (Customer) editable;
-                                break outer;
-                            }
-                        }
-                    }
-                }
-
-                ProductType productType = null;
-                outer:
-                for (Data.EditableGroup<?> group : Data.getInstance().editables) {
-                    if (group.type == ProductType.class) {
-                        for (Data.Editable editable : group) {
-                            if (editable.name.equals(productTypeName)) {
-                                productType = (ProductType) editable;
-                                break outer;
-                            }
-                        }
-                    }
-                }
+                 * В тз написано, что нельзя сохранить заказ в статусе Согласован
+                 * если не заполнена инфа о клиенте, тип продукции и кол-во
+                 * А у нас невозможно чтобы информация о клиенте и продукте была не заполнена
+                 * т.к. у нас идет выбор из предложенных вариантов
+                 * */
 
                 //Валидируем
-                if (status == OrderStatus.APPROVED && (customerInfo.isEmpty() || productTypeName.isEmpty() || quantity.isEmpty())) {
+                if (status == OrderStatus.APPROVED && (customer == null || productType == null || quantity.isEmpty())) {
                     //используем html чтобы все уместилось
                     resultLabel.setText("<html>Укажите информацию о клиенте,<br>" +
                             "вид лесопродукции и количество заказываемой лесопродукции</html>");
                     return;
-                }
-
-                //Если клиент не найден, создаем нового
-                if (customer == null && !customerInfo.isEmpty()) {
-                    customer = new Customer(customerInfo);
-                }
-                //Если продукт не найден, создаем новый
-                if (productType == null && !productTypeName.isEmpty()) {
-                    productType = new ProductType(productTypeName);
                 }
 
                 order.productType = productType;
