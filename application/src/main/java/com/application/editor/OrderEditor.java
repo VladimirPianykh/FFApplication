@@ -22,7 +22,7 @@ public class OrderEditor extends JPanel {
 		// Поля формы
 		JTextField registeredDateField = new JTextField(order.registrationDate.toString()),
 				requiredDateField = new JTextField(order.requiredDate.toString()),
-				quantityField = new JTextField(order.quantity);
+				quantityField = new JTextField(String.valueOf(order.quantity));
 		JTextArea additionalInfoField = new JTextArea(order.additionalInfo);
 		JComboBox<OrderStatus> statusField = new JComboBox<>(OrderStatus.values());
 		statusField.setSelectedItem(order.status);
