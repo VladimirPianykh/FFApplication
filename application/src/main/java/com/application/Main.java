@@ -18,7 +18,6 @@ import com.futurefactory.User;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
-import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.time.LocalDate;
@@ -28,22 +27,11 @@ import javax.swing.JButton;
 
 public class Main{
 	// public static enum ApplicationFeature implements Feature{
-		
+		// 
 	// }
 	static{
         Collections.addAll(User.registeredRoles,ApplicationRole.values());
         Collections.addAll(User.registeredPermissions,ApplicationPermission.values());
-		// for(Feature f:ApplicationFeature.values())User.registeredFeatures.add(f);
-		//user features
-		// WorkFrame.ftrMap.put(DefaultRole.ENGINEER,new Feature[]{Feature.HISTORY,Feature.MODEL_EDITING});
-		// WorkFrame.ftrMap.put(DefaultRole.PD_MANAGER,new Feature[]{Feature.HISTORY});
-		// WorkFrame.ftrMap.put(DefaultRole.PROCUREMENT_MANAGER,new Feature[]{Feature.HISTORY,Feature.MODEL_EDITING});
-		// WorkFrame.ftrMap.put(DefaultRole.PRODUCTION_MANAGER,new Feature[]{Feature.HISTORY,Feature.MODEL_EDITING});
-		// WorkFrame.ftrMap.put(DefaultRole.SALES_MANAGER,new Feature[]{Feature.HISTORY});
-		// WorkFrame.ftrMap.put(DefaultRole.SD_MANAGER,new Feature[]{Feature.HISTORY,Feature.MODEL_EDITING});
-		// WorkFrame.ftrMap.put(DefaultRole.STOREKEEPER,new Feature[]{Feature.HISTORY,Feature.MODEL_EDITING});
-		// WorkFrame.ftrMap.put(DefaultRole.TESTER,new Feature[]{Feature.HISTORY,Feature.MODEL_EDITING});
-		//user permissions
 	}
 	public static void main(String[]args){
 		Data d=Data.getInstance();
@@ -114,6 +102,7 @@ public class Main{
 			orders.add(new Order(LocalDate.now(),customers.get(0),productTypes.get(0),3,"",OrderStatus.APPROVED));
 			orders.add(new Order(LocalDate.now(),customers.get(1),productTypes.get(1),3,"",OrderStatus.APPROVED));
 			orders.add(new Order(LocalDate.now(),customers.get(1),productTypes.get(2),3,"",OrderStatus.APPROVED));
+			Data.save();
 		}
 	}
 }

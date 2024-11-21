@@ -9,6 +9,7 @@ public enum ApplicationRole implements User.Role {
 	COMMERCIAL_SERVICE(
 		new ApplicationPermission[]{
 			ApplicationPermission.CREATE_ORDER,
+			ApplicationPermission.CREATE_CUSTOMER,
 			ApplicationPermission.READ_ORDER,
 			ApplicationPermission.READ_PRODUCTTYPE,
 			ApplicationPermission.READ_CUSTOMER
@@ -16,6 +17,7 @@ public enum ApplicationRole implements User.Role {
 	),
 	PRODUCTION_SERVICE(
 		new ApplicationPermission[]{
+			ApplicationPermission.CREATE_PRODUCTTYPE,
 			ApplicationPermission.READ_ORDER,
 			ApplicationPermission.READ_PRODUCTTYPE,
 		},new User.Feature[]{DefaultFeature.HISTORY,DefaultFeature.MODEL_EDITING}

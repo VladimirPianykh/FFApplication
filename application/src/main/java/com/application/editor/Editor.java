@@ -3,6 +3,7 @@ package com.application.editor;
 import java.awt.BasicStroke;
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -13,11 +14,13 @@ import java.awt.Shape;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
+import java.lang.reflect.Field;
 import java.time.format.DateTimeFormatter;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -31,19 +34,19 @@ import com.futurefactory.Data.Editable.ActionRecord;
 import com.futurefactory.HButton;
 import com.futurefactory.IEditor;
 import com.futurefactory.PathIcon;
+import com.futurefactory.ProgramStarter;
 import com.futurefactory.Root;
 
-public class Editor extends JDialog implements IEditor{
-	public Editor(){super(null,ModalityType.APPLICATION_MODAL);}
+public class Editor implements IEditor{
 	public void constructEditor(Editable editable){
-		Editor th=this;
-		setSize(Root.SCREEN_SIZE);
-		setUndecorated(true);
-		setLayout(null);
+		JDialog editor=new JDialog(ProgramStarter.frame,true);
+		editor.setSize(Root.SCREEN_SIZE);
+		editor.setUndecorated(true);
+		editor.setLayout(null);
 		CardLayout layout=new CardLayout();
 		JPanel mainPanel=new JPanel(layout);
-		mainPanel.setBounds(0,0,getWidth(),getHeight());
-		PathIcon leftIcon=new PathIcon("ui/left.png",getHeight()/13,getHeight()/13),r=new PathIcon("ui/right.png",getHeight()/13,getHeight()/13);
+		mainPanel.setBounds(0,0,editor.getWidth(),editor.getHeight());
+		PathIcon leftIcon=new PathIcon("ui/left.png",editor.getHeight()/13,editor.getHeight()/13),r=new PathIcon("ui/right.png",editor.getHeight()/13,editor.getHeight()/13);
 		HButton left=new HButton(10,7){
 			public void paintComponent(Graphics g){
 				Graphics2D g2=(Graphics2D)g;
@@ -62,47 +65,47 @@ public class Editor extends JDialog implements IEditor{
 			}
 		};
 		left.setAction(new AbstractAction(){
-			public void actionPerformed(ActionEvent e){layout.previous(mainPanel);repaint();}
+			public void actionPerformed(ActionEvent e){layout.previous(mainPanel);editor.repaint();}
 		});
 		right.setAction(new AbstractAction(){
-			public void actionPerformed(ActionEvent e){layout.next(mainPanel);repaint();}
+			public void actionPerformed(ActionEvent e){layout.next(mainPanel);editor.repaint();}
 		});
-		left.setBounds(getWidth()/100,getHeight()*4/5,getHeight()/10,getHeight()/10);
-		right.setBounds(getWidth()*99/100-getHeight()/10,getHeight()*4/5,getHeight()/10,getHeight()/10);
+		left.setBounds(editor.getWidth()/100,editor.getHeight()*4/5,editor.getHeight()/10,editor.getHeight()/10);
+		right.setBounds(editor.getWidth()*99/100-editor.getHeight()/10,editor.getHeight()*4/5,editor.getHeight()/10,editor.getHeight()/10);
 		left.setFocusable(false);
 		right.setFocusable(false);
-		add(left);add(right);
-		add(mainPanel);
+		editor.add(left);editor.add(right);
+		editor.add(mainPanel);
 		JButton ok=new JButton();
-		ok.setBounds(getWidth()*2/5,getHeight()*9/10,getWidth()/5,getHeight()/20);
+		ok.setBounds(editor.getWidth()*2/5,editor.getHeight()*9/10,editor.getWidth()/5,editor.getHeight()/20);
 		ok.setText("Готово");
-		ok.addActionListener(e->dispose());
 		JTextField nameField=new JTextField(editable.name);
-		nameField.setBounds(getWidth()/5,getHeight()/100,getWidth()*3/5,getHeight()/10);
+		nameField.setBounds(editor.getWidth()/5,editor.getHeight()/100,editor.getWidth()*3/5,editor.getHeight()/10);
 		nameField.setFont(new Font(Font.DIALOG,Font.PLAIN,nameField.getHeight()*2/3));
 		nameField.setBackground(Color.DARK_GRAY);
 		nameField.setForeground(Color.LIGHT_GRAY);
+		ok.addActionListener(e->{editor.dispose();editable.name=nameField.getText();});
 		if(editable instanceof Order){
 			JPanel tab2=new JPanel(null);
 			tab2.setBackground(new Color(102,107,89));
 			JPanel history=new JPanel(null);
-			history.setPreferredSize(new Dimension(getWidth(),getHeight()*editable.records.size()/4));
+			history.setPreferredSize(new Dimension(editor.getWidth(),editor.getHeight()*editable.records.size()/4));
 			history.setOpaque(false);
 			JScrollPane s=new JScrollPane(history,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-			s.setSize(getWidth(),getHeight()*3/4);
+			s.setSize(editor.getWidth(),editor.getHeight()*3/4);
 			s.getViewport().setBackground(new Color(19,31,19));
 			s.getVerticalScrollBar().setOpaque(false);
-			s.getVerticalScrollBar().setUnitIncrement(getHeight()/30);
+			s.getVerticalScrollBar().setUnitIncrement(editor.getHeight()/30);
 			tab2.add(s);
 			class LocalComment extends HButton{
 				private static final float[]f={0,0.4f,0.5f,0.6f,1};
 				private static final Color[]c1={new Color(44,66,65),new Color(47,77,75),new Color(58,97,94),new Color(47,77,75),new Color(44,66,65)};
 				private static final Color[]c2={new Color(68,71,71),new Color(79,84,84),new Color(82,92,92),new Color(87,94,94),new Color(68,71,71)};
-				private final BasicStroke stroke=new BasicStroke(th.getHeight()/150);
+				private final BasicStroke stroke=new BasicStroke(editor.getHeight()/150);
 				private ActionRecord s;
 				public LocalComment(ActionRecord s,int index){
 					super(15,5);
-					setBounds(th.getWidth()/10,index*th.getHeight()/4+th.getHeight()/40,th.getWidth()*4/5,th.getHeight()/5);
+					setBounds(editor.getWidth()/10,index*editor.getHeight()/4+editor.getHeight()/40,editor.getWidth()*4/5,editor.getHeight()/5);
 					this.s=s;
 					setAction(new AbstractAction(){
 						public void actionPerformed(ActionEvent e){
@@ -165,17 +168,17 @@ public class Editor extends JDialog implements IEditor{
 			int i=0;
 			if(editable.records.isEmpty()){
 				JLabel l=new JLabel("Записи пусты.");
-				l.setBounds(0,0,getWidth(),getHeight());
-				l.setFont(new Font(Font.DIALOG,Font.BOLD,getHeight()/10));
+				l.setBounds(0,0,editor.getWidth(),editor.getHeight());
+				l.setFont(new Font(Font.DIALOG,Font.BOLD,editor.getHeight()/10));
 				history.add(l);
 			}else for(ActionRecord c:editable.records){
 				history.add(new LocalComment(c,i));
 				i++;
 			}
 			JLabel tab2Name=new JLabel("Записи");
-			tab2Name.setBounds(0,getHeight()*9/10,getWidth(),getHeight()/10);
+			tab2Name.setBounds(0,editor.getHeight()*9/10,editor.getWidth(),editor.getHeight()/10);
 			tab2Name.setForeground(Color.BLACK);
-			tab2Name.setFont(new Font(Font.DIALOG,Font.BOLD,getHeight()/40));
+			tab2Name.setFont(new Font(Font.DIALOG,Font.BOLD,editor.getHeight()/40));
 			tab2Name.setHorizontalAlignment(JLabel.CENTER);
 			tab2.add(tab2Name);
 			OrderEditor tab1=new OrderEditor((Order)editable,mainPanel);
@@ -195,6 +198,12 @@ public class Editor extends JDialog implements IEditor{
 		nameField.requestFocusInWindow();
 		nameField.setSelectionStart(0);
 		nameField.setSelectionEnd(nameField.getText().length());
-		setVisible(true);
+		editor.setVisible(true);
+	}
+	public static Component getEditorComponent(Field f){
+		return switch(f.getType()){
+			//TODO: add types
+			default->null;
+		};
 	}
 }
