@@ -22,8 +22,6 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.time.LocalDate;
-import java.util.Collections;
-
 import javax.swing.JButton;
 
 public class Main{

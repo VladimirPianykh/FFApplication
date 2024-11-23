@@ -1,6 +1,7 @@
 package com.application.order;
 
 import com.application.customer.Customer;
+import com.application.editor.EditorEntry;
 import com.application.product.ProductType;
 import com.futurefactory.Data;
 
@@ -9,11 +10,11 @@ import java.time.LocalDate;
 public class Order extends Data.Editable {
 	public LocalDate registrationDate;
 	public LocalDate requiredDate;
-	public Customer customerInfo;
-	public ProductType productType;
-	public int quantity;
-	public String additionalInfo;
-	public OrderStatus status;
+	@EditorEntry public Customer customerInfo;
+	@EditorEntry public ProductType productType;
+	@EditorEntry public int quantity;
+	@EditorEntry public String additionalInfo;
+	@EditorEntry public OrderStatus status;
 	public Order(
 		LocalDate requiredDate,
 		Customer customerInfo,

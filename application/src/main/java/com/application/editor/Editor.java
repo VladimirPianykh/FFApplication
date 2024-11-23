@@ -107,13 +107,12 @@ public class Editor implements IEditor{
 		nameField.setFont(new Font(Font.DIALOG,Font.PLAIN,nameField.getHeight()*2/3));
 		nameField.setBackground(Color.DARK_GRAY);
 		nameField.setForeground(Color.LIGHT_GRAY);
-		ok.addActionListener(e->{editor.dispose();editable.name=nameField.getText();});
+		ok.addActionListener(e->{if(ok.isFocusOwner()){editor.dispose();editable.name=nameField.getText();}});
 		JPanel tab1=new JPanel(null);
 		tab1.setBackground(Color.BLACK);
 		tab1.add(nameField);
 		tab1.add(ok);
-		mainPanel.add(tab1,"tab1");
-		JPanel form=new JPanel(new GridLayout(2,0));
+		JPanel form=new JPanel(new GridLayout(0,2));
 		JScrollPane sForm=new JScrollPane(form);
 		for(Field f:editable.getClass().getFields()){
 			if(!f.isAnnotationPresent(EditorEntry.class))continue;
@@ -126,6 +125,8 @@ public class Editor implements IEditor{
 		}
 		sForm.setBounds(editor.getWidth()/8,editor.getHeight()/8,editor.getWidth()*3/4,Math.min(form.getComponentCount()*editor.getHeight()*3/20,editor.getHeight()*3/4));
 		form.setPreferredSize(new Dimension(sForm.getWidth(),Math.max(sForm.getHeight(),form.getComponentCount()*sForm.getHeight()/5)));
+		tab1.add(sForm);
+		mainPanel.add(tab1,"tab1");
 		if(editable instanceof Order){
 			JPanel tab2=new JPanel(null);
 			tab2.setBackground(new Color(102,107,89));
@@ -249,7 +250,7 @@ public class Editor implements IEditor{
 					public void focusLost(FocusEvent o){try{f.set(o,a.getText());}catch(IllegalAccessException ex){}}
 				});
 				return a;
-			}else if(f.getType()==Integer.class){
+			}else if(f.getType()==int.class){
 				JSpinner a=new JSpinner(new SpinnerNumberModel(1,0,10000,1));
 				a.addFocusListener(new FocusListener(){
 					public void focusGained(FocusEvent e){}
@@ -257,15 +258,35 @@ public class Editor implements IEditor{
 				});
 				return a;
 			}else if(Editable.class.isAssignableFrom(f.getType())){
-				JComboBox<Editable>a=new JComboBox<>();
-				for(Editable e:Data.getInstance().getGroup((Class<? extends Editable>)f.getType()))a.addItem(e);
+				try{
+					JComboBox<Editable>a=new JComboBox<>();
+					for(Editable e:Data.getInstance().getGroup((Class<? extends Editable>)f.getType()))a.addItem(e);
+					a.setSelectedItem(f.get(o));
+					a.addFocusListener(new FocusListener(){
+						public void focusGained(FocusEvent e){}
+						public void focusLost(FocusEvent e){try{f.set(o,a.getSelectedItem());}catch(IllegalAccessException ex){}}
+					});
+					return a;
+				}catch(IllegalArgumentException ex){
+					JButton a=new JButton();
+					a.addActionListener(e->{
+						try{
+							ProgramStarter.editor.constructEditor((Editable)f.get(o));
+						}catch(IllegalAccessException exception){throw new RuntimeException(ex);}
+					});
+					return a;
+				}
+			}else if(f.getType().isEnum()){
+				JComboBox<Object>a=new JComboBox<>();
+				Object e=f.get(o);
+				for(Object obj:(Object[])e.getClass().getMethod("values").invoke(o))a.addItem(obj);
 				a.addFocusListener(new FocusListener(){
 					public void focusGained(FocusEvent e){}
 					public void focusLost(FocusEvent o){try{f.set(o,a.getSelectedItem());}catch(IllegalAccessException ex){}}
 				});
 				return a;
 			}
-		}catch(IllegalAccessException ex){}
+		}catch(Exception ex){throw new RuntimeException(ex);}
 		throw new UnsupportedOperationException("Component for "+f.getType()+" is not defined.");
 	}
 }
