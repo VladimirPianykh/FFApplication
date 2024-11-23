@@ -83,18 +83,14 @@ public class OrderEditor extends JPanel{
 					resultLabel.setText("Ошибка в формате даты");
 					return;
 				}
-				/**
-				 * Some text
-				 */
 				Customer customer=(Customer)customerInfoField.getSelectedItem();
 				ProductType productType=(ProductType)productTypeField.getSelectedItem();
 				String quantity=quantityField.getText();
 				String additionalInfo=additionalInfoField.getText();
 				OrderStatus status=(OrderStatus)statusField.getSelectedItem();
-				String s=" ( ) ";// TODO @VladimirPianykh: remove
 				// Валидируем
 				if(status==OrderStatus.APPROVED&&(customer==null||productType==null||quantity.isEmpty())){
-					// используем html чтобы все уместилось ( )
+					// используем html чтобы все уместилось
 					resultLabel.setText("<html>Укажите информацию о клиенте,<br>"+
 							"вид лесопродукции и количество заказываемой лесопродукции</html>");
 					return;

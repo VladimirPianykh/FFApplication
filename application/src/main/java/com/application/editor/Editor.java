@@ -9,28 +9,35 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GridLayout;
 import java.awt.LinearGradientPaint;
 import java.awt.Shape;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.geom.RoundRectangle2D;
 import java.lang.reflect.Field;
 import java.time.format.DateTimeFormatter;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
 import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
 
 import com.application.customer.Customer;
 import com.application.order.Order;
 import com.application.product.ProductType;
 import com.futurefactory.Data.Editable;
 import com.futurefactory.Data.Editable.ActionRecord;
+import com.futurefactory.Data;
 import com.futurefactory.HButton;
 import com.futurefactory.IEditor;
 import com.futurefactory.PathIcon;
@@ -76,15 +83,49 @@ public class Editor implements IEditor{
 		right.setFocusable(false);
 		editor.add(left);editor.add(right);
 		editor.add(mainPanel);
-		JButton ok=new JButton();
+		JButton ok=new JButton(){
+			public void paint(Graphics g){
+				g.setClip(new RoundRectangle2D.Double(0,0,getWidth(),getHeight(),getHeight(),getHeight()));
+				g.setColor(getModel().isPressed()?Color.DARK_GRAY:Color.GRAY);
+				g.fillRect(0,0,getWidth(),getHeight());
+				g.setColor(Color.BLACK);
+				FontMetrics fm=g.getFontMetrics();
+				g.drawString(getText(),(getWidth()-fm.stringWidth(getText()))/2,(getHeight()+fm.getAscent()+fm.getLeading()-fm.getDescent())/2);
+				if(getModel().isRollover()){
+					g.setColor(new Color(255,255,255,200));
+					((Graphics2D)g).setStroke(new BasicStroke(getHeight()/10));
+					g.drawRoundRect(0,0,getWidth(),getHeight(),getHeight(),getHeight());
+				}
+			}
+		};
 		ok.setBounds(editor.getWidth()*2/5,editor.getHeight()*9/10,editor.getWidth()/5,editor.getHeight()/20);
+		ok.setOpaque(false);
 		ok.setText("Готово");
+		ok.setFont(new Font(Font.DIALOG,Font.PLAIN,ok.getHeight()));
 		JTextField nameField=new JTextField(editable.name);
 		nameField.setBounds(editor.getWidth()/5,editor.getHeight()/100,editor.getWidth()*3/5,editor.getHeight()/10);
 		nameField.setFont(new Font(Font.DIALOG,Font.PLAIN,nameField.getHeight()*2/3));
 		nameField.setBackground(Color.DARK_GRAY);
 		nameField.setForeground(Color.LIGHT_GRAY);
 		ok.addActionListener(e->{editor.dispose();editable.name=nameField.getText();});
+		JPanel tab1=new JPanel(null);
+		tab1.setBackground(Color.BLACK);
+		tab1.add(nameField);
+		tab1.add(ok);
+		mainPanel.add(tab1,"tab1");
+		JPanel form=new JPanel(new GridLayout(2,0));
+		JScrollPane sForm=new JScrollPane(form);
+		for(Field f:editable.getClass().getFields()){
+			if(!f.isAnnotationPresent(EditorEntry.class))continue;
+			JLabel name=new JLabel(f.getName());
+			name.setBackground(Color.DARK_GRAY);
+			name.setForeground(Color.WHITE);
+			name.setBorder(null);
+			form.add(name);
+			form.add(createEditorComponent(editable,f,editor.getHeight()*3/20));
+		}
+		sForm.setBounds(editor.getWidth()/8,editor.getHeight()/8,editor.getWidth()*3/4,Math.min(form.getComponentCount()*editor.getHeight()*3/20,editor.getHeight()*3/4));
+		form.setPreferredSize(new Dimension(sForm.getWidth(),Math.max(sForm.getHeight(),form.getComponentCount()*sForm.getHeight()/5)));
 		if(editable instanceof Order){
 			JPanel tab2=new JPanel(null);
 			tab2.setBackground(new Color(102,107,89));
@@ -181,18 +222,9 @@ public class Editor implements IEditor{
 			tab2Name.setFont(new Font(Font.DIALOG,Font.BOLD,editor.getHeight()/40));
 			tab2Name.setHorizontalAlignment(JLabel.CENTER);
 			tab2.add(tab2Name);
-			OrderEditor tab1=new OrderEditor((Order)editable,mainPanel);
-			tab1.add(nameField);
-			tab1.add(ok);
 			mainPanel.add(tab2,"tab2");
 		}else if(editable instanceof Customer){
-			CustomerEditor tab1=new CustomerEditor((Customer)editable,mainPanel);
-			tab1.add(nameField);
-			tab1.add(ok);
 		}else if(editable instanceof ProductType){
-			ProductEditor tab1=new ProductEditor((ProductType)editable,mainPanel);
-			tab1.add(nameField);
-			tab1.add(ok);
 		}else throw new IllegalArgumentException();
 		layout.show(mainPanel,"tab1");
 		nameField.requestFocusInWindow();
@@ -200,10 +232,40 @@ public class Editor implements IEditor{
 		nameField.setSelectionEnd(nameField.getText().length());
 		editor.setVisible(true);
 	}
-	public static Component getEditorComponent(Field f){
-		return switch(f.getType()){
-			//TODO: add types
-			default->null;
-		};
+	public static Component createEditorComponent(Editable o,Field f,int h){
+		Component a=createEditorBase(o,f,h);
+		a.setFont(new Font(Font.DIALOG,Font.PLAIN,h/2));
+		a.setBackground(Color.DARK_GRAY);
+		a.setForeground(Color.WHITE);
+		return a;
+	}
+	@SuppressWarnings("unchecked")
+	private static Component createEditorBase(Editable o,Field f,int h){
+		try{
+			if(f.getType()==String.class){
+				JTextField a=new JTextField((String)f.get(o));
+				a.addFocusListener(new FocusListener(){
+					public void focusGained(FocusEvent e){}
+					public void focusLost(FocusEvent o){try{f.set(o,a.getText());}catch(IllegalAccessException ex){}}
+				});
+				return a;
+			}else if(f.getType()==Integer.class){
+				JSpinner a=new JSpinner(new SpinnerNumberModel(1,0,10000,1));
+				a.addFocusListener(new FocusListener(){
+					public void focusGained(FocusEvent e){}
+					public void focusLost(FocusEvent o){try{f.set(o,a.getValue());}catch(IllegalAccessException ex){}}
+				});
+				return a;
+			}else if(Editable.class.isAssignableFrom(f.getType())){
+				JComboBox<Editable>a=new JComboBox<>();
+				for(Editable e:Data.getInstance().getGroup((Class<? extends Editable>)f.getType()))a.addItem(e);
+				a.addFocusListener(new FocusListener(){
+					public void focusGained(FocusEvent e){}
+					public void focusLost(FocusEvent o){try{f.set(o,a.getSelectedItem());}catch(IllegalAccessException ex){}}
+				});
+				return a;
+			}
+		}catch(IllegalAccessException ex){}
+		throw new UnsupportedOperationException("Component for "+f.getType()+" is not defined.");
 	}
 }

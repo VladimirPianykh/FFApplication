@@ -13,6 +13,7 @@ import com.futurefactory.Data.EditableGroup;
 import com.futurefactory.HButton;
 import com.futurefactory.PathIcon;
 import com.futurefactory.ProgramStarter;
+import com.futurefactory.Registrator;
 import com.futurefactory.Root;
 import com.futurefactory.User;
 import java.awt.Color;
@@ -30,8 +31,8 @@ public class Main{
 		// 
 	// }
 	static{
-        Collections.addAll(User.registeredRoles,ApplicationRole.values());
-        Collections.addAll(User.registeredPermissions,ApplicationPermission.values());
+        Registrator.register(ApplicationRole.values());
+        Registrator.register(ApplicationPermission.values());
 	}
 	public static void main(String[]args){
 		Data d=Data.getInstance();
@@ -44,6 +45,7 @@ public class Main{
 			User.register("Коммерческая служба","pass").role=ApplicationRole.COMMERCIAL_SERVICE;
 			User.register("Служба производства","pass").role=ApplicationRole.PRODUCTION_SERVICE;
 			User.register("Служба технолога","pass").role=ApplicationRole.TECH_SERVICE;
+			//Регистрация групп элементов
 			customers=new EditableGroup<Customer>(
 				new PathIcon("ui/customer.png",Root.SCREEN_SIZE.width/20,Root.SCREEN_SIZE.width/20),
 				new PathIcon("ui/customer_add.png",Root.SCREEN_SIZE.width/20,Root.SCREEN_SIZE.width/20),
