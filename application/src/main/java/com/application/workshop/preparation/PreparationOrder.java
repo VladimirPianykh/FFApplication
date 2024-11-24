@@ -2,7 +2,7 @@ package com.application.workshop.preparation;
 
 import com.application.editor.EditorEntry;
 import com.application.workshop.WorkArea;
-import com.application.workshop.timber.TimberProductOrder;
+import com.application.workshop.timber.TimberProductTask;
 
 import java.time.LocalDate;
 
@@ -13,7 +13,7 @@ public class PreparationOrder {
     @EditorEntry
     public LocalDate preparationDate;
     @EditorEntry
-    public TimberProductOrder productionOrder;
+    public TimberProductTask productionTask;
     @EditorEntry
     public WorkArea workArea;
     @EditorEntry
@@ -29,15 +29,15 @@ public class PreparationOrder {
     // Constructor
     public PreparationOrder(LocalDate registrationDate,
                             LocalDate preparationDate,
-                            TimberProductOrder productionOrder,
+                            TimberProductTask productionTask,
                             WorkArea workArea,
                             String preparationDetails,
                             WorkshopPrepStatus status
     ) {
-        validateFields(registrationDate, preparationDate, productionOrder, workArea);
+        validateFields(registrationDate, preparationDate, productionTask, workArea);
         this.registrationDate = registrationDate;
         this.preparationDate = preparationDate;
-        this.productionOrder = productionOrder;
+        this.productionTask = productionTask;
         this.workArea = workArea;
         this.preparationDetails = preparationDetails;
 
@@ -46,7 +46,7 @@ public class PreparationOrder {
     }
 
     private void validateFields(LocalDate registrationDate, LocalDate preparationDate,
-                                TimberProductOrder productionOrder, WorkArea workArea) {
+                                TimberProductTask productionOrder, WorkArea workArea) {
 
         //Оставил все условия из тз чтобы легче было рефакторить
         if (registrationDate == null || preparationDate == null) {

@@ -8,8 +8,8 @@ import com.futurefactory.Data;
 import java.time.LocalDate;
 
 public class Order extends Data.Editable {
-	public LocalDate registrationDate;
-	public LocalDate requiredDate;
+	@EditorEntry public LocalDate registrationDate;
+	@EditorEntry public LocalDate requiredDate;
 	@EditorEntry public Customer customerInfo;
 	@EditorEntry public ProductType productType;
 	@EditorEntry public int quantity;
