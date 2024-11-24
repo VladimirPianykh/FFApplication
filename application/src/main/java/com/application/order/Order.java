@@ -2,19 +2,20 @@ package com.application.order;
 
 import com.application.customer.Customer;
 import com.application.editor.EditorEntry;
+import com.application.editor.EditorEntryBase;
 import com.application.product.ProductType;
 import com.futurefactory.Data;
 
 import java.time.LocalDate;
 
 public class Order extends Data.Editable {
-	@EditorEntry public LocalDate registrationDate;
-	@EditorEntry public LocalDate requiredDate;
-	@EditorEntry public Customer customerInfo;
-	@EditorEntry public ProductType productType;
-	@EditorEntry public int quantity;
-	@EditorEntry public String additionalInfo;
-	@EditorEntry public OrderStatus status;
+	@EditorEntry(translation = "Дата регистрации") public LocalDate registrationDate;
+	@EditorEntry(translation = "Дата окончания") public LocalDate requiredDate;
+	@EditorEntry(translation = "Информация о клиенте") public Customer customerInfo;
+	@EditorEntry(translation = "Вид лесопродукции") public ProductType productType;
+	@EditorEntry(translation = "Количество лесопродукции") public int quantity;
+	@EditorEntry(translation = "Дополнительная информация") public String additionalInfo;
+	@EditorEntry(translation = "Статус заказа") public OrderStatus status;
 	public Order(
 		LocalDate requiredDate,
 		Customer customerInfo,
