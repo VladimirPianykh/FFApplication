@@ -277,7 +277,7 @@ public class Editor implements IEditor{
 						}catch(DateTimeParseException ex){return false;}
 					}
 				});
-				a.setText((String)f.get(o));
+				a.setText(((LocalDate)f.get(o)).toString());
 				a.addFocusListener(new FocusListener(){
 					public void focusGained(FocusEvent e){}
 					public void focusLost(FocusEvent e){try{f.set(o,LocalDate.parse(a.getText()));}catch(IllegalAccessException|DateTimeParseException ex){}}
@@ -310,6 +310,7 @@ public class Editor implements IEditor{
 					public void focusGained(FocusEvent e){}
 					public void focusLost(FocusEvent e){try{f.set(o,a.getSelectedItem());}catch(IllegalAccessException ex){}}
 				});
+				a.setSelectedItem(f.get(o));
 				return a;
 			}
 		}catch(Exception ex){throw new RuntimeException(ex);}

@@ -44,6 +44,7 @@ public class Main{
 	static{
         Registrator.register(ApplicationRole.values());
         Registrator.register(ApplicationPermission.values());
+		Registrator.register(new TaskBoard());
 	}
 	public static void main(String[]args){
 		Data d=Data.getInstance();
