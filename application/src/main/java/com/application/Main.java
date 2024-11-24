@@ -30,7 +30,7 @@ import javax.swing.JPanel;
 public class Main{
 	public static class TaskBoard implements Feature{
 		@Override
-		public void fillTab(JPanel arg0, JPanel arg1, Font arg2) {
+		public void fillTab(JPanel content, JPanel tab, Font font) {
 			// TODO Auto-generated method stub
 			throw new UnsupportedOperationException("Unimplemented method 'fillTab'");
 		}

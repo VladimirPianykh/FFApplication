@@ -1,13 +1,20 @@
 package com.application.workshop;
 
 import com.application.editor.EditorEntry;
+import com.futurefactory.Data;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class WorkShopEditor {
+public class WorkShopEditor extends Data.Editable {
 
-	@EditorEntry(translation = "Название")
-	ArrayList<WorkArea> parts = new ArrayList<>();
+	@EditorEntry(translation = "Участки")
+	ArrayList<WorkArea> parts;
+
+	public WorkShopEditor(String name, ArrayList<WorkArea> parts) {
+		super(name);
+		this.parts = parts;
+	}
 	/*
 	Создать объект для хранения информации о рабочих участках цехов завода (каждый
 	участок принадлежит определенному цеху, т.е. Объекты для хранения информации о цехах
