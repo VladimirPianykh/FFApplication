@@ -24,9 +24,9 @@ public class TimberProductTask {
     public String additionalInfo;
 
     public TimberProductTask(LocalDate registrationDate, LocalDate startDate,
-                              Order order, String productType,
-                              int quantity, List<String> productionWorkshops,
-                              String additionalInfo) {
+                             Order order, String productType,
+                             int quantity, List<String> productionWorkshops,
+                             String additionalInfo) {
         validateFields(registrationDate, startDate, order, productType, quantity, productionWorkshops);
         this.registrationDate = registrationDate;
         this.startDate = startDate;
