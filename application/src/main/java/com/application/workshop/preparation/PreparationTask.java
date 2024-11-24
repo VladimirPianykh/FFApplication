@@ -8,22 +8,22 @@ import java.time.LocalDate;
 
 public class PreparationTask {
 
-	@EditorEntry
+	@EditorEntry(translation = "Дата регистрация")
 	public LocalDate registrationDate;
-	@EditorEntry
+	@EditorEntry(translation = "Дата окончания")
 	public LocalDate preparationDate;
-	@EditorEntry
+	@EditorEntry(translation = "Задание на производство")
 	public TimberProductTask productionOrder;
-	@EditorEntry
+	@EditorEntry(translation = "Рабочий участок")
 	public WorkArea workArea;
-	@EditorEntry
+	@EditorEntry(translation = "Дополнительная информация")
 	public String preparationDetails;
 
 	/*
 	Статус задания («Создано» и «Выполнено»). Объект создается изначально в статусе "Создан"
 	//TODO: Определиться как быть со статусом, при первом создании убирать поле статуса, или оставить всё как есть
 	 */
-	@EditorEntry
+	@EditorEntry(translation = "Статус задания")
 	public WorkshopPrepStatus status;
 
 	// Constructor

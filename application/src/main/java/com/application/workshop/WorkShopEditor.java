@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 public class WorkShopEditor {
 
-	@EditorEntry
+	@EditorEntry(translation = "Название")
 	ArrayList<WorkArea> parts = new ArrayList<>();
 	/*
 	Создать объект для хранения информации о рабочих участках цехов завода (каждый

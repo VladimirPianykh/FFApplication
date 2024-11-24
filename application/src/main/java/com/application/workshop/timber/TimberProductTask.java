@@ -8,19 +8,19 @@ import java.time.LocalDate;
 import java.util.List;
 
 public class TimberProductTask {
-    @EditorEntry
+    @EditorEntry(translation = "Дата регистрации задания")
     public LocalDate registrationDate;
-    @EditorEntry
+    @EditorEntry(translation = "Дата, с которой требуется начать выполнять задание")
     public LocalDate startDate;
-    @EditorEntry
+    @EditorEntry(translation = "Вид лесопродукции")
     public String productType;
-    @EditorEntry
+    @EditorEntry(translation = "Заказ на лесопродукцию")
     public Order order;
-    @EditorEntry
+    @EditorEntry(translation = "Количество лесопродукции")
     public int quantity;
-    @EditorEntry
+    @EditorEntry(translation = "Цеха, которые будут задействованы в изготовлении лесопродукции")
     public List<String> productionWorkshops;
-    @EditorEntry
+    @EditorEntry(translation = "Дополнительная информация")
     public String additionalInfo;
 
     public TimberProductTask(LocalDate registrationDate, LocalDate startDate,
