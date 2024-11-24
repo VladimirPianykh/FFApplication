@@ -120,9 +120,8 @@ public class Editor implements IEditor{
 		JPanel form=new JPanel(new GridLayout(0,2));
 		JScrollPane sForm=new JScrollPane(form);
 		Font font=new Font(Font.DIALOG,Font.PLAIN,editor.getHeight()*3/40);
-		for(Field f:editable.getClass().getFields()){
+		for(Field f:editable.getClass().getFields())try{
 			if(!f.isAnnotationPresent(EditorEntry.class))continue;
-			((EditorEntry)f.getAnnotation(EditorEntry.class))
 			JLabel name=new JLabel(f.getName());
 			name.setOpaque(true);
 			name.setFont(font);
@@ -130,8 +129,10 @@ public class Editor implements IEditor{
 			name.setForeground(Color.WHITE);
 			name.setBorder(null);
 			form.add(name);
-			form.add(createEditorComponent(editable,f,font));
-		}
+			if(((EditorEntry)f.getAnnotation(EditorEntry.class)).editorBaseSource()==EditorEntryBase.class)
+				form.add(wrapEditorComponent(createEditorBase(editable,f),font));
+			else form.add(((EditorEntry)f.getAnnotation(EditorEntry.class)).editorBaseSource().getDeclaredConstructor().newInstance().createEditorBase(editable,f));
+		}catch(Exception ex){throw new RuntimeException(ex);}
 		sForm.setBounds(editor.getWidth()/8,editor.getHeight()/8,editor.getWidth()*3/4,Math.min(form.getComponentCount()*editor.getHeight()*3/20,editor.getHeight()*3/4));
 		sForm.getVerticalScrollBar().setUnitIncrement(sForm.getHeight()/10);
 		form.setPreferredSize(new Dimension(sForm.getWidth(),Math.max(sForm.getHeight(),form.getComponentCount()*sForm.getHeight()/5)));
@@ -243,8 +244,7 @@ public class Editor implements IEditor{
 		nameField.setSelectionEnd(nameField.getText().length());
 		editor.setVisible(true);
 	}
-	public static Component createEditorComponent(Editable o,Field f,Font font){
-		Component a=createEditorBase(o,f);
+	public static Component wrapEditorComponent(Component a,Font font){
 		a.setFont(font);
 		a.setBackground(Color.DARK_GRAY);
 		a.setForeground(Color.WHITE);

@@ -10,6 +10,7 @@ import com.application.product.ProductType;
 import com.futurefactory.Data;
 import com.futurefactory.Data.Editable;
 import com.futurefactory.Data.EditableGroup;
+import com.futurefactory.User.Feature;
 import com.futurefactory.HButton;
 import com.futurefactory.PathIcon;
 import com.futurefactory.ProgramStarter;
@@ -21,13 +22,25 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 import java.time.LocalDate;
 import javax.swing.JButton;
+import javax.swing.JPanel;
 
 public class Main{
-	// public static enum ApplicationFeature implements Feature{
-		// 
-	// }
+	public static class TaskBoard implements Feature{
+		@Override
+		public void fillTab(JPanel arg0, JPanel arg1, Font arg2) {
+			// TODO Auto-generated method stub
+			throw new UnsupportedOperationException("Unimplemented method 'fillTab'");
+		}
+
+		@Override
+		public void paint(Graphics2D g2, BufferedImage image, int s) {
+			
+		}
+
+	}
 	static{
         Registrator.register(ApplicationRole.values());
         Registrator.register(ApplicationPermission.values());
