@@ -122,6 +122,7 @@ public class Editor implements IEditor{
 		Font font=new Font(Font.DIALOG,Font.PLAIN,editor.getHeight()*3/40);
 		for(Field f:editable.getClass().getFields()){
 			if(!f.isAnnotationPresent(EditorEntry.class))continue;
+			((EditorEntry)f.getAnnotation(EditorEntry.class))
 			JLabel name=new JLabel(f.getName());
 			name.setOpaque(true);
 			name.setFont(font);
@@ -276,9 +277,10 @@ public class Editor implements IEditor{
 						}catch(DateTimeParseException ex){return false;}
 					}
 				});
+				a.setText((String)f.get(o));
 				a.addFocusListener(new FocusListener(){
 					public void focusGained(FocusEvent e){}
-					public void focusLost(FocusEvent e){try{f.set(o,LocalDate.parse(a.getText()));}catch(IllegalAccessException ex){}}
+					public void focusLost(FocusEvent e){try{f.set(o,LocalDate.parse(a.getText()));}catch(IllegalAccessException|DateTimeParseException ex){}}
 				});
 				return a;
 			}else if(Editable.class.isAssignableFrom(f.getType())){
