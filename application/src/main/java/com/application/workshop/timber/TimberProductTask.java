@@ -7,7 +7,7 @@ import com.application.order.OrderStatus;
 import java.time.LocalDate;
 import java.util.List;
 
-public class TimberProductOrder {
+public class TimberProductTask {
     @EditorEntry
     public LocalDate registrationDate;
     @EditorEntry
@@ -23,7 +23,7 @@ public class TimberProductOrder {
     @EditorEntry
     public String additionalInfo;
 
-    public TimberProductOrder(LocalDate registrationDate, LocalDate startDate,
+    public TimberProductTask(LocalDate registrationDate, LocalDate startDate,
                               Order order, String productType,
                               int quantity, List<String> productionWorkshops,
                               String additionalInfo) {

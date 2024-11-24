@@ -19,16 +19,21 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.geom.RoundRectangle2D;
 import java.lang.reflect.Field;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 import javax.swing.AbstractAction;
+import javax.swing.InputVerifier;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 
@@ -114,16 +119,20 @@ public class Editor implements IEditor{
 		tab1.add(ok);
 		JPanel form=new JPanel(new GridLayout(0,2));
 		JScrollPane sForm=new JScrollPane(form);
+		Font font=new Font(Font.DIALOG,Font.PLAIN,editor.getHeight()*3/40);
 		for(Field f:editable.getClass().getFields()){
 			if(!f.isAnnotationPresent(EditorEntry.class))continue;
 			JLabel name=new JLabel(f.getName());
+			name.setOpaque(true);
+			name.setFont(font);
 			name.setBackground(Color.DARK_GRAY);
 			name.setForeground(Color.WHITE);
 			name.setBorder(null);
 			form.add(name);
-			form.add(createEditorComponent(editable,f,editor.getHeight()*3/20));
+			form.add(createEditorComponent(editable,f,font));
 		}
 		sForm.setBounds(editor.getWidth()/8,editor.getHeight()/8,editor.getWidth()*3/4,Math.min(form.getComponentCount()*editor.getHeight()*3/20,editor.getHeight()*3/4));
+		sForm.getVerticalScrollBar().setUnitIncrement(sForm.getHeight()/10);
 		form.setPreferredSize(new Dimension(sForm.getWidth(),Math.max(sForm.getHeight(),form.getComponentCount()*sForm.getHeight()/5)));
 		tab1.add(sForm);
 		mainPanel.add(tab1,"tab1");
@@ -233,28 +242,43 @@ public class Editor implements IEditor{
 		nameField.setSelectionEnd(nameField.getText().length());
 		editor.setVisible(true);
 	}
-	public static Component createEditorComponent(Editable o,Field f,int h){
-		Component a=createEditorBase(o,f,h);
-		a.setFont(new Font(Font.DIALOG,Font.PLAIN,h/2));
+	public static Component createEditorComponent(Editable o,Field f,Font font){
+		Component a=createEditorBase(o,f);
+		a.setFont(font);
 		a.setBackground(Color.DARK_GRAY);
 		a.setForeground(Color.WHITE);
 		return a;
 	}
 	@SuppressWarnings("unchecked")
-	private static Component createEditorBase(Editable o,Field f,int h){
+	private static Component createEditorBase(Editable o,Field f){
 		try{
 			if(f.getType()==String.class){
-				JTextField a=new JTextField((String)f.get(o));
+				JTextArea a=new JTextArea((String)f.get(o));
 				a.addFocusListener(new FocusListener(){
 					public void focusGained(FocusEvent e){}
-					public void focusLost(FocusEvent o){try{f.set(o,a.getText());}catch(IllegalAccessException ex){}}
+					public void focusLost(FocusEvent e){try{f.set(o,a.getText());}catch(IllegalAccessException ex){}}
 				});
 				return a;
 			}else if(f.getType()==int.class){
 				JSpinner a=new JSpinner(new SpinnerNumberModel(1,0,10000,1));
 				a.addFocusListener(new FocusListener(){
 					public void focusGained(FocusEvent e){}
-					public void focusLost(FocusEvent o){try{f.set(o,a.getValue());}catch(IllegalAccessException ex){}}
+					public void focusLost(FocusEvent e){try{f.set(o,a.getValue());}catch(IllegalAccessException ex){}}
+				});
+				return a;
+			}else if(f.getType()==LocalDate.class){
+				JTextField a=new JTextField();
+				a.setInputVerifier(new InputVerifier(){
+					public boolean verify(JComponent input){
+						try{
+							LocalDate.parse(((JTextField)input).getText());
+							return true;
+						}catch(DateTimeParseException ex){return false;}
+					}
+				});
+				a.addFocusListener(new FocusListener(){
+					public void focusGained(FocusEvent e){}
+					public void focusLost(FocusEvent e){try{f.set(o,LocalDate.parse(a.getText()));}catch(IllegalAccessException ex){}}
 				});
 				return a;
 			}else if(Editable.class.isAssignableFrom(f.getType())){
@@ -282,7 +306,7 @@ public class Editor implements IEditor{
 				for(Object obj:(Object[])e.getClass().getMethod("values").invoke(o))a.addItem(obj);
 				a.addFocusListener(new FocusListener(){
 					public void focusGained(FocusEvent e){}
-					public void focusLost(FocusEvent o){try{f.set(o,a.getSelectedItem());}catch(IllegalAccessException ex){}}
+					public void focusLost(FocusEvent e){try{f.set(o,a.getSelectedItem());}catch(IllegalAccessException ex){}}
 				});
 				return a;
 			}
