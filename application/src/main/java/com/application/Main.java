@@ -108,7 +108,6 @@ public class Main{
 				new PathIcon("ui/product_add.png",Root.SCREEN_SIZE.width/20,Root.SCREEN_SIZE.width/20),
 				Workshop.class
 			);
-			
 			d.editables.add(customers);
 			d.editables.add(productTypes);
 			d.editables.add(orders);
