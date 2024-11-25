@@ -1,5 +1,6 @@
 package com.application.access;
 
+import com.application.Main.TaskBoard;
 import com.futurefactory.User;
 import com.futurefactory.User.Permission;
 import com.futurefactory.defaults.DefaultFeature;
@@ -25,7 +26,7 @@ public enum ApplicationRole implements User.Role {
 	TECH_SERVICE(
 		new ApplicationPermission[]{
 			ApplicationPermission.READ_PRODUCTTYPE
-		},new User.Feature[]{DefaultFeature.HISTORY,DefaultFeature.MODEL_EDITING}
+		},new User.Feature[]{DefaultFeature.HISTORY,DefaultFeature.MODEL_EDITING,TaskBoard.instance}
 	);
 
 	ApplicationRole(Permission[]permissions,User.Feature[]features){

@@ -17,6 +17,8 @@ import com.futurefactory.ProgramStarter;
 import com.futurefactory.Registrator;
 import com.futurefactory.Root;
 import com.futurefactory.User;
+
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -29,6 +31,8 @@ import javax.swing.JPanel;
 
 public class Main{
 	public static class TaskBoard implements Feature{
+		private TaskBoard(){}
+		public static TaskBoard instance=new TaskBoard();
 		@Override
 		public void fillTab(JPanel arg0, JPanel arg1, Font arg2) {
 			// TODO Auto-generated method stub
@@ -37,14 +41,17 @@ public class Main{
 
 		@Override
 		public void paint(Graphics2D g2, BufferedImage image, int s) {
-			
+			g2.setStroke(new BasicStroke(s/10));
+			g2.drawRect(s/10,s/5,s*4/5,s*3/5);
+			g2.setStroke(new BasicStroke(s/20));
+			g2.drawPolygon(new int[]{s/2,s/4,s/2,s/3,s/2,s/2,s/2,s*2/3,s/2,s*3/4,s/2,s/2,s*2/3,s/2,s/2,s/3},new int[]{s/2,s/2,s/2,s/3,s/2,s/4,s/2,s*2/3,s/2,s/2,s/2,s*2/3,s/2,s/2,s*3/4,s/2,s*2/3},16);
 		}
 
 	}
 	static{
         Registrator.register(ApplicationRole.values());
         Registrator.register(ApplicationPermission.values());
-		Registrator.register(new TaskBoard());
+		Registrator.register(TaskBoard.instance);
 	}
 	public static void main(String[]args){
 		Data d=Data.getInstance();
