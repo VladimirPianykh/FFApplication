@@ -9,36 +9,111 @@ import com.application.order.OrderStatus;
 import com.application.product.ProductType;
 import com.application.workshop.WorkArea;
 import com.application.workshop.Workshop;
-import com.futurefactory.Data;
+import com.application.workshop.manager.PreparationTaskManager;
+import com.application.workshop.preparation.PreparationTask;
+import com.futurefactory.*;
 import com.futurefactory.Data.Editable;
 import com.futurefactory.Data.EditableGroup;
 import com.futurefactory.User.Feature;
-import com.futurefactory.HButton;
-import com.futurefactory.PathIcon;
-import com.futurefactory.ProgramStarter;
-import com.futurefactory.Registrator;
-import com.futurefactory.Root;
-import com.futurefactory.User;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.time.LocalDate;
-import javax.swing.JButton;
-import javax.swing.JPanel;
+import java.util.Date;
+import java.util.Objects;
+import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 
 public class Main{
 	public static class TaskBoard implements Feature{
 		private TaskBoard(){}
 		public static TaskBoard instance=new TaskBoard();
-		public void fillTab(JPanel content,JPanel tab,Font font){
-			// TODO @borisaushev: fill the TaskBoard
-			// Не забудь про цветную подсветку в соответствии с ТЗ.
+		public void fillTab(JPanel content, JPanel tab, Font font) {
+			// Получение списка задач
+			var tasks = PreparationTaskManager.getTasks();
+			tab.setLayout(new BorderLayout()); // Используем BorderLayout для размещения компонентов
+
+			// Создаем панель с выбором цехов и таблицей
+			JPanel subTab = new JPanel(new BorderLayout());
+			subTab.setOpaque(false);
+			subTab.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Отступы
+
+			// Получение списка цехов
+			Data d = Data.getInstance();
+			JComboBox<Workshop> workshops = null;
+			Workshop[] list;
+			for (EditableGroup<?> group : d.editables) {
+				if (group.type == Workshop.class) {
+					list = new Workshop[group.size()];
+					for (int i = 0; i < group.size(); i++) {
+						list[i] = (Workshop) group.get(i);
+					}
+					workshops = new JComboBox<>(list);
+					break;
+				}
+			}
+			if (workshops == null) {
+				throw new RuntimeException("Не найдены цеха");
+			}
+
+			// Применение шрифта к ComboBox
+			workshops.setFont(font);
+			workshops.setBorder(BorderFactory.createTitledBorder("Выбор цеха"));
+
+			// Таблица для отображения задач
+			var tableModel = new DefaultTableModel(new String[]{"Дата", "Описание", "Название"}, 0) {
+				@Override
+				public boolean isCellEditable(int row, int column) {
+					return false; // Таблица не редактируется
+				}
+			};
+			var tasksTable = new JTable(tableModel);
+			tasksTable.setFont(font);
+			tasksTable.setRowHeight(30); // Увеличенный размер строки для лучшей читаемости
+			tasksTable.getTableHeader().setFont(font.deriveFont(Font.BOLD)); // Жирный шрифт для заголовков
+			tasksTable.setFillsViewportHeight(true); // Заполнение пустого пространства
+			tasksTable.setDefaultRenderer(Object.class, new TaskTableCellRenderer());
+
+			// Добавляем таблицу в JScrollPane
+			JScrollPane scrollPane = new JScrollPane(tasksTable);
+			scrollPane.setBorder(BorderFactory.createTitledBorder("Список задач"));
+
+			// Обновление таблицы при выборе цеха
+			JComboBox<Workshop> finalWorkshops = workshops;
+			workshops.addActionListener(a -> {
+				if (finalWorkshops.getSelectedItem() == null) {
+					return;
+				}
+				tableModel.setRowCount(0); // Очистка таблицы
+				Workshop selectedWorkshop = (Workshop) finalWorkshops.getSelectedItem();
+				for (WorkArea area : selectedWorkshop.parts) {
+					for (var prepTask : tasks) {
+						if (prepTask.workArea == area) {
+							tableModel.addRow(new Object[]{
+									prepTask.preparationDate,
+									prepTask.workArea.name,
+									prepTask.preparationDetails
+							});
+						}
+					}
+				}
+			});
+
+			// Добавление компонентов в subTab
+			subTab.add(workshops, BorderLayout.NORTH);
+			subTab.add(scrollPane, BorderLayout.CENTER);
+
+			// Добавление subTab в основную панель
+			tab.add(subTab, BorderLayout.CENTER);
+
+			// Перерисовка панели
+			tab.revalidate();
+			tab.repaint();
 		}
+
 		public void paint(Graphics2D g2,BufferedImage image,int s){
 			g2.setStroke(new BasicStroke(s/10));
 			g2.drawRect(s/10,s/5,s*4/5,s*3/5);
@@ -47,6 +122,28 @@ public class Main{
 						   new int[]{s/2,s/2,s/2,s/3,s/2,s/4,s/2,s/3,s/2,s/2,s/2,s*2/3,s/2,s*3/4,s/2,s*2/3,s/2},16);
 		}
 		public String toString(){return "Рабочий стол";}
+
+		private static class TaskTableCellRenderer extends DefaultTableCellRenderer {
+			@Override
+			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+				Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+
+				// Extract date value
+				Date preparationDate = (Date) table.getValueAt(row, 0);
+				Date startProductionDate = new Date(); // Replace with actual production date logic
+
+				// Highlight rows based on date comparison
+				if (preparationDate.equals(startProductionDate)) {
+					c.setBackground(Color.RED);
+				} else if (preparationDate.equals(new Date(startProductionDate.getTime() - 86400000))) { // -1 day
+					c.setBackground(Color.YELLOW);
+				} else {
+					c.setBackground(Color.WHITE);
+				}
+
+				return c;
+			}
+		}
 	}
 	static{
 		Registrator.register(ApplicationRole.values());

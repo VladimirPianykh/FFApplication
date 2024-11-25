@@ -8,5 +8,7 @@ public enum ApplicationPermission implements User.Permission{
     CREATE_CUSTOMER,
     READ_ORDER,
     READ_PRODUCTTYPE,
-    READ_CUSTOMER
+    READ_CUSTOMER,
+    READ_PREP_TASK,
+    CREATE_PREP_TASK
 }

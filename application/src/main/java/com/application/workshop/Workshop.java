@@ -8,4 +8,9 @@ public class Workshop extends Editable{
 		super(name);
 		this.parts=workShopParts;
 	}
+
+	@Override
+	public String toString() {
+		return name;
+	}
 }
