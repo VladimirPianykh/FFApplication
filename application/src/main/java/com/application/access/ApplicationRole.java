@@ -25,7 +25,9 @@ public enum ApplicationRole implements User.Role {
 	),
 	TECH_SERVICE(
 		new ApplicationPermission[]{
-			ApplicationPermission.READ_PRODUCTTYPE
+			ApplicationPermission.READ_PRODUCTTYPE,
+            ApplicationPermission.READ_PREP_TASK,
+            ApplicationPermission.CREATE_PREP_TASK
 		},new User.Feature[]{DefaultFeature.HISTORY,DefaultFeature.MODEL_EDITING,TaskBoard.instance}
 	);
 

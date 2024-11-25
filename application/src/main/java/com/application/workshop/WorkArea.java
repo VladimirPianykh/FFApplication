@@ -2,7 +2,9 @@ package com.application.workshop;
 
 import com.application.editor.EditorEntry;
 
-public class WorkArea {
+import java.io.Serializable;
+
+public class WorkArea implements Serializable {
     @EditorEntry(translation = "Название")
     public String name;
 
