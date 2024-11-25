@@ -2,7 +2,6 @@ package com.application.order;
 
 import com.application.customer.Customer;
 import com.application.editor.EditorEntry;
-import com.application.editor.EditorEntryBase;
 import com.application.product.ProductType;
 import com.futurefactory.Data;
 

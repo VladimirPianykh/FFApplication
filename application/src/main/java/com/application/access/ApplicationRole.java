@@ -31,6 +31,6 @@ public enum ApplicationRole implements User.Role {
 
 	ApplicationRole(Permission[]permissions,User.Feature[]features){
 		User.permissions.put(this,permissions);
-		WorkFrame.ftrMap.put(this,new User.Feature[]{DefaultFeature.HISTORY,DefaultFeature.MODEL_EDITING});
+		WorkFrame.ftrMap.put(this,features);
 	}
 }

@@ -5,7 +5,6 @@ import com.application.order.Order;
 import com.application.order.OrderStatus;
 import com.futurefactory.Data;
 
-import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
 

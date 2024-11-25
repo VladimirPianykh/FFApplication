@@ -7,6 +7,8 @@ import com.application.editor.Editor;
 import com.application.order.Order;
 import com.application.order.OrderStatus;
 import com.application.product.ProductType;
+import com.application.workshop.WorkArea;
+import com.application.workshop.Workshop;
 import com.futurefactory.Data;
 import com.futurefactory.Data.Editable;
 import com.futurefactory.Data.EditableGroup;
@@ -33,24 +35,22 @@ public class Main{
 	public static class TaskBoard implements Feature{
 		private TaskBoard(){}
 		public static TaskBoard instance=new TaskBoard();
-		@Override
-		public void fillTab(JPanel content, JPanel tab, Font font) {
-			// TODO Auto-generated method stub
-			throw new UnsupportedOperationException("Unimplemented method 'fillTab'");
+		public void fillTab(JPanel content,JPanel tab,Font font){
+			// TODO @borisaushev: fill the TaskBoard
+			// Не забудь про цветную подсветку в соответствии с ТЗ.
 		}
-
-		@Override
-		public void paint(Graphics2D g2, BufferedImage image, int s) {
+		public void paint(Graphics2D g2,BufferedImage image,int s){
 			g2.setStroke(new BasicStroke(s/10));
 			g2.drawRect(s/10,s/5,s*4/5,s*3/5);
 			g2.setStroke(new BasicStroke(s/20));
-			g2.drawPolygon(new int[]{s/2,s/4,s/2,s/3,s/2,s/2,s/2,s*2/3,s/2,s*3/4,s/2,s/2,s*2/3,s/2,s/2,s/3},new int[]{s/2,s/2,s/2,s/3,s/2,s/4,s/2,s*2/3,s/2,s/2,s/2,s*2/3,s/2,s/2,s*3/4,s/2,s*2/3},16);
+			g2.drawPolygon(new int[]{s/2,s/4,s/2,s/3,s/2,s/2,s/2,s*2/3,s/2,s*3/4,s/2,s*2/3,s/2,s/2,s/2,s/3,s/2},
+						   new int[]{s/2,s/2,s/2,s/3,s/2,s/4,s/2,s/3,s/2,s/2,s/2,s*2/3,s/2,s*3/4,s/2,s*2/3,s/2},16);
 		}
-
+		public String toString(){return "Рабочий стол";}
 	}
 	static{
-        Registrator.register(ApplicationRole.values());
-        Registrator.register(ApplicationPermission.values());
+		Registrator.register(ApplicationRole.values());
+		Registrator.register(ApplicationPermission.values());
 		Registrator.register(TaskBoard.instance);
 	}
 	public static void main(String[]args){
@@ -58,6 +58,7 @@ public class Main{
 		EditableGroup<Customer>customers=null;
 		EditableGroup<ProductType>productTypes=null;
 		EditableGroup<Order>orders=null;
+		EditableGroup<Workshop>workshops=null;
 		boolean firstLaunch=User.getUserCount()==0;
 		if(firstLaunch){
 			//Регистрация служб
@@ -102,11 +103,18 @@ public class Main{
 					};
 				}
 			};
+			workshops=new EditableGroup<Workshop>(
+				new PathIcon("ui/product.png",Root.SCREEN_SIZE.width/20,Root.SCREEN_SIZE.width/20),
+				new PathIcon("ui/product_add.png",Root.SCREEN_SIZE.width/20,Root.SCREEN_SIZE.width/20),
+				Workshop.class
+			);
+			
 			d.editables.add(customers);
 			d.editables.add(productTypes);
 			d.editables.add(orders);
+			d.editables.add(workshops);
 		}
-		ProgramStarter.welcomeMessage="Добро пожаловать в \"Лесозавод №10 Белка\".\nВыберите службу, чтобы продолжить.";
+		ProgramStarter.welcomeMessage="Добро пожаловать в \"Лесозавод №10 Белка\".\nВыберите службу,чтобы продолжить.";
 		ProgramStarter.authRequired=false;
 		ProgramStarter.editor=new Editor();
 		ProgramStarter.runProgram();
@@ -123,6 +131,35 @@ public class Main{
 			orders.add(new Order(LocalDate.now(),customers.get(0),productTypes.get(0),3,"",OrderStatus.APPROVED));
 			orders.add(new Order(LocalDate.now(),customers.get(1),productTypes.get(1),3,"",OrderStatus.APPROVED));
 			orders.add(new Order(LocalDate.now(),customers.get(1),productTypes.get(2),3,"",OrderStatus.APPROVED));
+			workshops.add(new Workshop("лесопильный цех",
+				new WorkArea[]{
+					new WorkArea("Лесопильная линия №1"),
+					new WorkArea("Лесопильная линия №2")
+				}
+			));
+			workshops.add(new Workshop("Сушильный комплекс",
+				new WorkArea[]{
+					new WorkArea("Сушильная камера №1"),
+					new WorkArea("Сушильная камера №2"),
+					new WorkArea("Сушильная камера №3"),
+					new WorkArea("Сушильная камера №4")
+				}
+			));
+			workshops.add(new Workshop("Цех строжки и обработки",
+				new WorkArea[]{
+					new WorkArea("Линия строжки №1"),
+					new WorkArea("Линия строжки №2"),
+					new WorkArea("Линия строжки №3")
+				}
+			));
+			workshops.add(new Workshop("Пеллетный цех",
+				new WorkArea[]{
+					new WorkArea("Дробилка"),
+					new WorkArea("Сушилка"),
+					new WorkArea("Гранулятор №1"),
+					new WorkArea("Гранулятор №2")
+				}
+			));
 			Data.save();
 		}
 	}

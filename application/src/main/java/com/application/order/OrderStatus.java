@@ -1,7 +1,7 @@
 package com.application.order;
 
 // Перечисление для статуса заказа
-//Чтобы не писать кучу if-else просто выводишь status.toString() или status.toRussian
+//Чтобы не писать кучу if-else просто выводишь status.toString() или status.translation
 public enum OrderStatus{
     DRAFT("Черновик"),
     APPROVED("Согласован клиентом"),
