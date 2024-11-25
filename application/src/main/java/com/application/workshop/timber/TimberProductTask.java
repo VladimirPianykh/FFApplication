@@ -3,11 +3,13 @@ package com.application.workshop.timber;
 import com.application.editor.EditorEntry;
 import com.application.order.Order;
 import com.application.order.OrderStatus;
+import com.futurefactory.Data;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
 
-public class TimberProductTask {
+public class TimberProductTask extends Data.Editable {
     @EditorEntry(translation = "Дата регистрации задания")
     public LocalDate registrationDate;
     @EditorEntry(translation = "Дата, с которой требуется начать выполнять задание")
@@ -27,6 +29,7 @@ public class TimberProductTask {
                              Order order, String productType,
                              int quantity, List<String> productionWorkshops,
                              String additionalInfo) {
+        super("Редактирование");
         validateFields(registrationDate, startDate, order, productType, quantity, productionWorkshops);
         this.registrationDate = registrationDate;
         this.startDate = startDate;

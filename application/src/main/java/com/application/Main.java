@@ -34,7 +34,7 @@ public class Main{
 		private TaskBoard(){}
 		public static TaskBoard instance=new TaskBoard();
 		@Override
-		public void fillTab(JPanel arg0, JPanel arg1, Font arg2) {
+		public void fillTab(JPanel content, JPanel tab, Font font) {
 			// TODO Auto-generated method stub
 			throw new UnsupportedOperationException("Unimplemented method 'fillTab'");
 		}

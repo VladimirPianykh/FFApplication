@@ -4,9 +4,10 @@ import com.application.editor.EditorEntry;
 import com.application.workshop.WorkArea;
 import com.application.workshop.timber.TimberProductTask;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
-public class PreparationTask {
+public class PreparationTask implements Serializable {
 
 	@EditorEntry(translation = "Дата регистрация")
 	public LocalDate registrationDate;
