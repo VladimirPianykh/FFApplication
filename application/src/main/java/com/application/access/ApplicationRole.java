@@ -19,14 +19,19 @@ public enum ApplicationRole implements User.Role {
 	PRODUCTION_SERVICE(
 		new ApplicationPermission[]{
 			ApplicationPermission.CREATE_PRODUCTTYPE,
+			ApplicationPermission.CREATE_TIMBERPRODUCTTASK,
 			ApplicationPermission.READ_ORDER,
 			ApplicationPermission.READ_PRODUCTTYPE,
+			ApplicationPermission.READ_WORKSHOP,
+			ApplicationPermission.READ_TIMBERPRODUCTTASK,
 		},new User.Feature[]{DefaultFeature.HISTORY,DefaultFeature.MODEL_EDITING}
 	),
 	TECH_SERVICE(
 		new ApplicationPermission[]{
+			ApplicationPermission.CREATE_TIMBERPRODUCTTASK,
 			ApplicationPermission.READ_PRODUCTTYPE,
-            ApplicationPermission.READ_WORKSHOP
+            ApplicationPermission.READ_WORKSHOP,
+			ApplicationPermission.READ_TIMBERPRODUCTTASK
 		},new User.Feature[]{DefaultFeature.HISTORY,DefaultFeature.MODEL_EDITING,TaskBoard.instance}
 	);
 

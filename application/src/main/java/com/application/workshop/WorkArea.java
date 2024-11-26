@@ -1,14 +1,13 @@
 package com.application.workshop;
 
+import com.futurefactory.Data.Editable;
 import com.futurefactory.editor.EditorEntry;
 
-import java.io.Serializable;
-
-public class WorkArea implements Serializable {
-    @EditorEntry(translation = "Название")
-    public String name;
-
-    public WorkArea(String name) {
-        this.name = name;
+public class WorkArea extends Editable{
+    @EditorEntry(translation="Информация")
+    public String description;
+    public WorkArea(String name){super(name);}
+    public boolean equals(Object o){
+        return (o instanceof WorkArea&&((WorkArea)o).name.equals(name));
     }
 }

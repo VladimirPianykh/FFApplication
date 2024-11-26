@@ -7,6 +7,9 @@ import com.application.order.OrderStatus;
 import com.application.workshop.WorkArea;
 import com.application.workshop.Workshop;
 import com.application.workshop.manager.PreparationTaskManager;
+import com.application.workshop.preparation.PreparationTask;
+import com.application.workshop.preparation.WorkshopPrepStatus;
+import com.application.workshop.timber.TimberProductTask;
 import com.futurefactory.*;
 import com.futurefactory.Data.Editable;
 import com.futurefactory.Data.EditableGroup;
@@ -15,7 +18,7 @@ import com.futurefactory.User.Feature;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.time.LocalDate;
-import java.util.Date;
+import java.util.Arrays;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -39,23 +42,19 @@ public class Main{
 			list=new Workshop[group.size()];
 			for(int i=0;i<group.size();++i)list[i]=(Workshop)group.get(i);
 			JComboBox<Workshop>workshops=new JComboBox<>(list);
-			// Применение шрифта к ComboBox
 			workshops.setFont(font);
 			workshops.setBorder(BorderFactory.createTitledBorder("Выбор цеха"));
-			// Таблица для отображения задач
 			var tableModel=new DefaultTableModel(new String[]{"Дата","Описание","Название"},0){
 				public boolean isCellEditable(int row,int column){return false;}
 			};
 			var tasksTable=new JTable(tableModel);
 			tasksTable.setFont(font);
-			tasksTable.setRowHeight(30);// Увеличенный размер строки для лучшей читаемости
-			tasksTable.getTableHeader().setFont(font.deriveFont(Font.BOLD));// Жирный шрифт для заголовков
-			tasksTable.setFillsViewportHeight(true);// Заполнение пустого пространства
+			tasksTable.setRowHeight(30);
+			tasksTable.getTableHeader().setFont(font.deriveFont(Font.BOLD));
+			tasksTable.setFillsViewportHeight(true);
 			tasksTable.setDefaultRenderer(Object.class,new TaskTableCellRenderer());
-			// Добавляем таблицу в JScrollPane
 			JScrollPane scrollPane=new JScrollPane(tasksTable);
 			scrollPane.setBorder(BorderFactory.createTitledBorder("Список задач"));
-			// Обновление таблицы при выборе цеха
 			JComboBox<Workshop>finalWorkshops=workshops;
 			workshops.addActionListener(a->{
 				if(finalWorkshops.getSelectedItem()==null)return;
@@ -63,7 +62,7 @@ public class Main{
 				Workshop selectedWorkshop=(Workshop)finalWorkshops.getSelectedItem();
 				for(WorkArea area:selectedWorkshop.parts){
 					for(var prepTask:tasks){
-						if(prepTask.workArea==area){
+						if(prepTask.workArea.equals(area)){
 							tableModel.addRow(new Object[]{
 									prepTask.preparationDate,
 									prepTask.workArea.name,
@@ -73,12 +72,9 @@ public class Main{
 					}
 				}
 			});
-			// Добавление компонентов в subTab
 			subTab.add(workshops,BorderLayout.NORTH);
 			subTab.add(scrollPane,BorderLayout.CENTER);
-			// Добавление subTab в основную панель
 			tab.add(subTab,BorderLayout.CENTER);
-			// Перерисовка панели
 			tab.revalidate();
 			tab.repaint();
 		}
@@ -94,11 +90,11 @@ public class Main{
 			@Override
 			public Component getTableCellRendererComponent(JTable table,Object value,boolean isSelected,boolean hasFocus,int row,int column){
 				Component c=super.getTableCellRendererComponent(table,value,isSelected,hasFocus,row,column);
-				// Extract date value
-				Date preparationDate=(Date)table.getValueAt(row,0);
-				Date startProductionDate=new Date();// Replace with actual production date logic
-				// Highlight rows based on date comparison
-				if(preparationDate.equals(startProductionDate))c.setBackground(Color.RED);else if(preparationDate.equals(new Date(startProductionDate.getTime()-86400000))){// -1 day
+				// Extract LocalDate value
+				LocalDate preparationDate=(LocalDate)table.getValueAt(row,0);
+				LocalDate startProductionDate=LocalDate.now();// Replace with actual production LocalDate logic
+				// Highlight rows based on LocalDate comparison
+				if(preparationDate.equals(startProductionDate))c.setBackground(Color.RED);else if(preparationDate.equals(startProductionDate.minusDays(1))){
 					c.setBackground(Color.YELLOW);
 				}else{c.setBackground(Color.WHITE);}
 				return c;
@@ -111,11 +107,11 @@ public class Main{
 		Registrator.register(TaskBoard.instance);
 	}
 	public static void main(String[]args){
-		Data d=Data.getInstance();
 		EditableGroup<Customer>customers=null;
 		EditableGroup<ProductType>productTypes=null;
 		EditableGroup<Order>orders=null;
 		EditableGroup<Workshop>workshops=null;
+		EditableGroup<TimberProductTask>productionTasks=null;
 		boolean firstLaunch=User.getUserCount()==0;
 		if(firstLaunch){
 			//Регистрация служб
@@ -161,14 +157,20 @@ public class Main{
 				}
 			};
 			workshops=new EditableGroup<Workshop>(
-				new PathIcon("ui/product.png",Root.SCREEN_SIZE.width/20,Root.SCREEN_SIZE.width/20),
+				new PathIcon("ui/factory.png",Root.SCREEN_SIZE.width/20,Root.SCREEN_SIZE.width/20),
 				new PathIcon("ui/product_add.png",Root.SCREEN_SIZE.width/20,Root.SCREEN_SIZE.width/20),
 				Workshop.class
 			);
-			d.editables.add(customers);
-			d.editables.add(productTypes);
-			d.editables.add(orders);
-			d.editables.add(workshops);
+			productionTasks=new EditableGroup<TimberProductTask>(
+				new PathIcon("ui/order.png",Root.SCREEN_SIZE.width/20,Root.SCREEN_SIZE.width/20),
+				new PathIcon("ui/order_add.png",Root.SCREEN_SIZE.width/20,Root.SCREEN_SIZE.width/20),
+				TimberProductTask.class
+			);
+			Registrator.register(customers);
+			Registrator.register(productTypes);
+			Registrator.register(orders);
+			Registrator.register(workshops);
+			Registrator.register(productionTasks);
 		}
 		ProgramStarter.welcomeMessage="Добро пожаловать в \"Лесозавод №10 Белка\".\nВыберите службу,чтобы продолжить.";
 		ProgramStarter.authRequired=false;
@@ -183,9 +185,9 @@ public class Main{
 			productTypes.add(new ProductType("Пеллеты"));
 			customers.add(new Customer("Boris Aushev"));
 			customers.add(new Customer("Vladimir Pianykh"));
-			orders.add(new Order(LocalDate.now(),customers.get(0),productTypes.get(0),3,"",OrderStatus.APPROVED));
-			 	orders.add(new Order(LocalDate.now(),customers.get(1),productTypes.get(1),3,"",OrderStatus.APPROVED));
-			orders.add(new Order(LocalDate.now(),customers.get(1),productTypes.get(2),3,"",OrderStatus.APPROVED));
+			orders.add(new Order(LocalDate.now().plusDays(1),customers.get(0),productTypes.get(0),3,"",OrderStatus.IN_PRODUCTION));
+			orders.add(new Order(LocalDate.now().plusDays(1),customers.get(1),productTypes.get(1),3,"",OrderStatus.IN_PRODUCTION));
+			orders.add(new Order(LocalDate.now().plusDays(1),customers.get(1),productTypes.get(2),3,"",OrderStatus.IN_PRODUCTION));
 			workshops.add(new Workshop("Лесопильный цех",
 				new WorkArea[]{
 					new WorkArea("Лесопильная линия №1"),
@@ -215,6 +217,16 @@ public class Main{
 					new WorkArea("Гранулятор №2")
 				}
 			));
+			productionTasks.add(new TimberProductTask(LocalDate.now().plusDays(3),orders.get(0),productTypes.get(0),3,Arrays.asList(new Workshop[]{workshops.get(0)}),""));
+			productionTasks.add(new TimberProductTask(LocalDate.now().plusDays(3),orders.get(1),productTypes.get(1),3,Arrays.asList(new Workshop[]{workshops.get(0),workshops.get(1)}),""));
+			productionTasks.add(new TimberProductTask(LocalDate.now().plusDays(3),orders.get(2),productTypes.get(2),3,Arrays.asList(new Workshop[]{workshops.get(0),workshops.get(1),workshops.get(2)}),""));
+			for(WorkArea area:workshops.get(0).parts)PreparationTaskManager.registerTask(new PreparationTask(LocalDate.now().plusDays(1),productionTasks.get(0),area,"",WorkshopPrepStatus.CREATED));
+			for(WorkArea area:workshops.get(0).parts)PreparationTaskManager.registerTask(new PreparationTask(LocalDate.now().plusDays(1),productionTasks.get(1),area,"",WorkshopPrepStatus.CREATED));
+			for(WorkArea area:workshops.get(1).parts)PreparationTaskManager.registerTask(new PreparationTask(LocalDate.now().plusDays(1),productionTasks.get(1),area,"",WorkshopPrepStatus.CREATED));
+			for(WorkArea area:workshops.get(0).parts)PreparationTaskManager.registerTask(new PreparationTask(LocalDate.now().plusDays(1),productionTasks.get(2),area,"",WorkshopPrepStatus.CREATED));
+			for(WorkArea area:workshops.get(1).parts)PreparationTaskManager.registerTask(new PreparationTask(LocalDate.now().plusDays(1),productionTasks.get(2),area,"",WorkshopPrepStatus.CREATED));
+			for(WorkArea area:workshops.get(2).parts)PreparationTaskManager.registerTask(new PreparationTask(LocalDate.now().plusDays(1),productionTasks.get(2),area,"",WorkshopPrepStatus.CREATED));
+			PreparationTaskManager.save();
 			Data.save();
 		}
 	}
