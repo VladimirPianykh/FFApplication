@@ -1,4 +1,4 @@
-package com.application.customer;
+package com.application;
 
 import com.futurefactory.Data;
 

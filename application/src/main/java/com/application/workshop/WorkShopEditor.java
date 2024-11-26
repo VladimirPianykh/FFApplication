@@ -1,6 +1,6 @@
 package com.application.workshop;
 
-import com.application.editor.EditorEntry;
+import com.futurefactory.editor.EditorEntry;
 import com.futurefactory.Data;
 
 import java.util.ArrayList;

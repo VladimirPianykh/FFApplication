@@ -1,6 +1,6 @@
 package com.application.workshop.timber;
 
-import com.application.editor.EditorEntry;
+import com.futurefactory.editor.EditorEntry;
 import com.application.order.Order;
 import com.application.order.OrderStatus;
 import com.futurefactory.Data;

@@ -1,8 +1,8 @@
 package com.application.order;
 
-import com.application.customer.Customer;
-import com.application.editor.EditorEntry;
-import com.application.product.ProductType;
+import com.application.Customer;
+import com.application.ProductType;
+import com.futurefactory.editor.EditorEntry;
 import com.futurefactory.Data;
 
 import java.time.LocalDate;

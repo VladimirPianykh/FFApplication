@@ -1,6 +1,6 @@
 package com.application.workshop.preparation;
 
-import com.application.editor.EditorEntry;
+import com.futurefactory.editor.EditorEntry;
 import com.application.workshop.WorkArea;
 import com.application.workshop.timber.TimberProductTask;
 
