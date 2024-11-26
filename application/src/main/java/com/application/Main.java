@@ -173,8 +173,8 @@ public class Main{
 				TimberProductTask.class
 			);
 			preparationTasks=new EditableGroup<>(
-				new PathIcon("ui/order2.png",Root.SCREEN_SIZE.width/20,Root.SCREEN_SIZE.width/20),
-				new PathIcon("ui/order_add2.png",Root.SCREEN_SIZE.width/20,Root.SCREEN_SIZE.width/20),
+				new PathIcon("ui/order.png",Root.SCREEN_SIZE.width/20,Root.SCREEN_SIZE.width/20),
+				new PathIcon("ui/order_add.png",Root.SCREEN_SIZE.width/20,Root.SCREEN_SIZE.width/20),
 				PreparationTask.class
 			);
 			Registrator.register(customers);
