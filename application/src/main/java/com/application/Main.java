@@ -6,7 +6,6 @@ import com.application.order.Order;
 import com.application.order.OrderStatus;
 import com.application.workshop.WorkArea;
 import com.application.workshop.Workshop;
-import com.application.workshop.manager.PreparationTaskManager;
 import com.application.workshop.preparation.PreparationTask;
 import com.application.workshop.preparation.WorkshopPrepStatus;
 import com.application.workshop.timber.TimberProductTask;
@@ -19,6 +18,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.LinkedList;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -29,7 +29,11 @@ public class Main{
 		public static TaskBoard instance=new TaskBoard();
 		public void fillTab(JPanel content,JPanel tab,Font font){
 			// Получение списка задач
-			var tasks=PreparationTaskManager.getTasks();
+			var tasksGroup=Data.getInstance().getGroup(PreparationTask.class);
+			LinkedList<PreparationTask> tasks = new LinkedList<>();
+			for(var taskEditable : tasksGroup) {
+				tasks.add((PreparationTask) taskEditable);
+			}
 			tab.setLayout(new BorderLayout());// Используем BorderLayout для размещения компонентов
 			// Создаем панель с выбором цехов и таблицей
 			JPanel subTab=new JPanel(new BorderLayout());
@@ -44,7 +48,7 @@ public class Main{
 			JComboBox<Workshop>workshops=new JComboBox<>(list);
 			workshops.setFont(font);
 			workshops.setBorder(BorderFactory.createTitledBorder("Выбор цеха"));
-			var tableModel=new DefaultTableModel(new String[]{"Дата","Описание","Название"},0){
+			var tableModel=new DefaultTableModel(new String[]{"Дата","Описание","Участок"},0){
 				public boolean isCellEditable(int row,int column){return false;}
 			};
 			var tasksTable=new JTable(tableModel);
@@ -65,8 +69,8 @@ public class Main{
 						if(prepTask.workArea.equals(area)){
 							tableModel.addRow(new Object[]{
 									prepTask.preparationDate,
-									prepTask.workArea.name,
-									prepTask.preparationDetails
+									prepTask.preparationDetails,
+									prepTask.workArea.name
 							});
 						}
 					}
@@ -112,12 +116,14 @@ public class Main{
 		EditableGroup<Order>orders=null;
 		EditableGroup<Workshop>workshops=null;
 		EditableGroup<TimberProductTask>productionTasks=null;
+		EditableGroup<PreparationTask>preparationTasks=null;
 		boolean firstLaunch=User.getUserCount()==0;
 		if(firstLaunch){
 			//Регистрация служб
 			User.register("Коммерческая служба","pass").role=ApplicationRole.COMMERCIAL_SERVICE;
 			User.register("Служба производства","pass").role=ApplicationRole.PRODUCTION_SERVICE;
 			User.register("Служба технолога","pass").role=ApplicationRole.TECH_SERVICE;
+
 			//Регистрация групп элементов
 			customers=new EditableGroup<Customer>(
 				new PathIcon("ui/customer.png",Root.SCREEN_SIZE.width/20,Root.SCREEN_SIZE.width/20),
@@ -166,11 +172,17 @@ public class Main{
 				new PathIcon("ui/order_add.png",Root.SCREEN_SIZE.width/20,Root.SCREEN_SIZE.width/20),
 				TimberProductTask.class
 			);
+			preparationTasks=new EditableGroup<>(
+				new PathIcon("ui/order2.png",Root.SCREEN_SIZE.width/20,Root.SCREEN_SIZE.width/20),
+				new PathIcon("ui/order_add2.png",Root.SCREEN_SIZE.width/20,Root.SCREEN_SIZE.width/20),
+				PreparationTask.class
+			);
 			Registrator.register(customers);
 			Registrator.register(productTypes);
 			Registrator.register(orders);
 			Registrator.register(workshops);
 			Registrator.register(productionTasks);
+			Registrator.register(preparationTasks);
 		}
 		ProgramStarter.welcomeMessage="Добро пожаловать в \"Лесозавод №10 Белка\".\nВыберите службу,чтобы продолжить.";
 		ProgramStarter.authRequired=false;
@@ -220,13 +232,10 @@ public class Main{
 			productionTasks.add(new TimberProductTask(LocalDate.now().plusDays(3),orders.get(0),productTypes.get(0),3,Arrays.asList(new Workshop[]{workshops.get(0)}),""));
 			productionTasks.add(new TimberProductTask(LocalDate.now().plusDays(3),orders.get(1),productTypes.get(1),3,Arrays.asList(new Workshop[]{workshops.get(0),workshops.get(1)}),""));
 			productionTasks.add(new TimberProductTask(LocalDate.now().plusDays(3),orders.get(2),productTypes.get(2),3,Arrays.asList(new Workshop[]{workshops.get(0),workshops.get(1),workshops.get(2)}),""));
-			for(WorkArea area:workshops.get(0).parts)PreparationTaskManager.registerTask(new PreparationTask(LocalDate.now().plusDays(1),productionTasks.get(0),area,"",WorkshopPrepStatus.CREATED));
-			for(WorkArea area:workshops.get(0).parts)PreparationTaskManager.registerTask(new PreparationTask(LocalDate.now().plusDays(1),productionTasks.get(1),area,"",WorkshopPrepStatus.CREATED));
-			for(WorkArea area:workshops.get(1).parts)PreparationTaskManager.registerTask(new PreparationTask(LocalDate.now().plusDays(1),productionTasks.get(1),area,"",WorkshopPrepStatus.CREATED));
-			for(WorkArea area:workshops.get(0).parts)PreparationTaskManager.registerTask(new PreparationTask(LocalDate.now().plusDays(1),productionTasks.get(2),area,"",WorkshopPrepStatus.CREATED));
-			for(WorkArea area:workshops.get(1).parts)PreparationTaskManager.registerTask(new PreparationTask(LocalDate.now().plusDays(1),productionTasks.get(2),area,"",WorkshopPrepStatus.CREATED));
-			for(WorkArea area:workshops.get(2).parts)PreparationTaskManager.registerTask(new PreparationTask(LocalDate.now().plusDays(1),productionTasks.get(2),area,"",WorkshopPrepStatus.CREATED));
-			PreparationTaskManager.save();
+			for(WorkArea area:workshops.get(0).parts) preparationTasks.add(new PreparationTask(LocalDate.now().plusDays(1),productionTasks.get(0),area,"Описание1",WorkshopPrepStatus.CREATED));
+			for(WorkArea area:workshops.get(1).parts) preparationTasks.add(new PreparationTask(LocalDate.now().plusDays(1),productionTasks.get(1),area,"Описание2",WorkshopPrepStatus.CREATED));
+			for(WorkArea area:workshops.get(2).parts) preparationTasks.add(new PreparationTask(LocalDate.now().plusDays(1),productionTasks.get(2),area,"Описание3",WorkshopPrepStatus.CREATED));
+			for(WorkArea area:workshops.get(3).parts) preparationTasks.add(new PreparationTask(LocalDate.now().plusDays(1),productionTasks.get(2),area,"Описание4",WorkshopPrepStatus.CREATED));
 			Data.save();
 		}
 	}

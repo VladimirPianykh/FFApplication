@@ -31,7 +31,9 @@ public enum ApplicationRole implements User.Role {
 			ApplicationPermission.CREATE_TIMBERPRODUCTTASK,
 			ApplicationPermission.READ_PRODUCTTYPE,
             ApplicationPermission.READ_WORKSHOP,
-			ApplicationPermission.READ_TIMBERPRODUCTTASK
+			ApplicationPermission.READ_TIMBERPRODUCTTASK,
+			ApplicationPermission.CREATE_PREPARATIONTASK,
+			ApplicationPermission.READ_PREPARATIONTASK
 		},new User.Feature[]{DefaultFeature.HISTORY,DefaultFeature.MODEL_EDITING,TaskBoard.instance}
 	);
 

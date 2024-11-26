@@ -13,4 +13,6 @@ public enum ApplicationPermission implements User.Permission{
     READ_CUSTOMER,
     READ_WORKSHOP,
     READ_TIMBERPRODUCTTASK,
+    READ_PREPARATIONTASK,
+    CREATE_PREPARATIONTASK
 }
