@@ -77,7 +77,7 @@ public class TimberProductTask extends Data.Editable{
 							 Order order,ProductType productType,
 							 int quantity,List<Workshop>productionWorkshops,
 							 String additionalInfo){
-		super("Задание обработки");
+		super("Задание на производство"); //Это не задание обработки! Это задание на производство
 		this.registrationDate=LocalDate.now();
 		this.startDate=startDate;
 		this.order=order;
@@ -85,6 +85,7 @@ public class TimberProductTask extends Data.Editable{
 		this.quantity=quantity;
 		this.productionWorkshops=productionWorkshops;
 		this.additionalInfo=additionalInfo;
+		//Не логично: мы сначала регистрируем заказ, а уже потом проверяем на валидность
 		validateFields(registrationDate,startDate,order,productType,quantity,productionWorkshops);
 	}
 	private boolean validateFields(LocalDate registrationDate,LocalDate startDate,
