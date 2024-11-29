@@ -9,11 +9,9 @@ import java.util.List;
 
 public class WorkAreaManager {
     private static List<WorkArea> areas;
-    static{
-        loadAreas();}
-    public static List<WorkArea> getAreas(){return areas;}
-    public static void registerArea(WorkArea area){
-        areas.add(area);}
+    static{loadAreas();}
+    public static List<WorkArea>getAreas(){return areas;}
+    public static void registerArea(WorkArea area){areas.add(area);}
     public static void save(){
         try(ObjectOutputStream oos=new ObjectOutputStream(new FileOutputStream(Root.folder+"areas.ser"))){
             oos.writeObject(areas);// Сериализация списка задач

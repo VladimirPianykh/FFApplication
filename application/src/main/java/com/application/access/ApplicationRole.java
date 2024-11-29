@@ -1,10 +1,10 @@
 package com.application.access;
 
-import com.application.Main.TaskBoard;
+import com.application.TaskBoard;
+import com.futurefactory.Registrator;
 import com.futurefactory.User;
 import com.futurefactory.User.Permission;
 import com.futurefactory.defaults.DefaultFeature;
-import com.futurefactory.WorkFrame;
 
 public enum ApplicationRole implements User.Role {
 	COMMERCIAL_SERVICE(
@@ -38,7 +38,6 @@ public enum ApplicationRole implements User.Role {
 	);
 
 	ApplicationRole(Permission[]permissions,User.Feature[]features){
-		User.permissions.put(this,permissions);
-		WorkFrame.ftrMap.put(this,features);
+		Registrator.register(this,features,permissions);
 	}
 }

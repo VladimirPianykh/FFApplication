@@ -1,22 +1,13 @@
 package com.application.workshop.preparation;
 
-import com.application.order.Order;
 import com.futurefactory.Data;
 import com.futurefactory.editor.EditorEntry;
 import com.application.workshop.WorkArea;
 import com.application.workshop.timber.TimberProductTask;
-import com.futurefactory.editor.VerifiedInput;
 
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 
-@VerifiedInput(verifier= PreparationTask.Verifier.class)
-public class PreparationTask extends Data.Editable {
-	public static class Verifier implements com.futurefactory.editor.Verifier{
-		@Override
-		public boolean verify(Data.Editable editable){PreparationTask e=(PreparationTask)editable;return true;}
-	}
-
+public class PreparationTask extends Data.Editable{
 	@EditorEntry(translation="Дата регистрация")
 	public LocalDate registrationDate;
 	@EditorEntry(translation="Дата окончания")
