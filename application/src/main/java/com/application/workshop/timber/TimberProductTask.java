@@ -13,8 +13,6 @@ import com.futurefactory.Data.EditableGroup;
 
 import java.awt.Component;
 import java.awt.GridLayout;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
 import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.util.ArrayList;

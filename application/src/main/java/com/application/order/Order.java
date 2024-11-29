@@ -31,8 +31,7 @@ public class Order extends Data.Editable{
 		OrderStatus status
 	){
 		super(productType==null?"Новый заказ":productType.name+" #"+(int)(Math.random()*100000000));
-		//Условия валидности
-		this.registrationDate=LocalDate.now();//Автоматическая установка даты регистрации
+		this.registrationDate=LocalDate.now();
 		this.requiredDate=requiredDate;
 		this.customerInfo=customerInfo;
 		this.productType=productType;

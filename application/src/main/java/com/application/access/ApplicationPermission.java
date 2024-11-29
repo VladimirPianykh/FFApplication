@@ -1,5 +1,6 @@
 package com.application.access;
 
+import com.futurefactory.Registrator;
 import com.futurefactory.User;
 
 public enum ApplicationPermission implements User.Permission{
@@ -8,11 +9,12 @@ public enum ApplicationPermission implements User.Permission{
     CREATE_CUSTOMER,
     CREATE_WORKSHOP,
     CREATE_TIMBERPRODUCTTASK,
+    CREATE_PREPARATIONTASK,
     READ_ORDER,
     READ_PRODUCTTYPE,
     READ_CUSTOMER,
     READ_WORKSHOP,
     READ_TIMBERPRODUCTTASK,
-    READ_PREPARATIONTASK,
-    CREATE_PREPARATIONTASK
+    READ_PREPARATIONTASK;
+    static{Registrator.register(values());}
 }
