@@ -1,9 +1,10 @@
 package com.application.shift;
 
 import com.application.workshop.WorkArea;
+import com.futurefactory.Data;
 
 import java.time.LocalDate;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -13,32 +14,40 @@ import java.util.List;
  * Реализовать выбор рабочего участка из списка свободных на указанную смену.
  */
 public class WorkAreaShiftManager {
-    private static HashMap<WorkArea, List<LocalDate>> reservedDates;
-
     private WorkAreaShiftManager() {
     }
 
-    public static void reserveDateForArea(WorkArea area, LocalDate date) {
-        if (!reservedDates.containsKey(area)) {
-            reservedDates.put(area, new LinkedList<>());
-        }
-        reservedDates.get(area).add(date);
-    }
-
     public static List<LocalDate> getReservedDates(WorkArea area) {
-        return reservedDates.get(area);
-    }
+        List<LocalDate> result = new LinkedList<>();
 
-    public static List<WorkArea> getNotReservedAreas(LocalDate date) {
-        List<WorkArea> result = new LinkedList<>();
-        for (var entry : reservedDates.entrySet()) {
-            List<LocalDate> reservedDates = entry.getValue();
-            if (!reservedDates.contains(date)) {
-                WorkArea area = entry.getKey();
-                result.add(area);
+        var taskGroup = Data.getInstance().getGroup(ShiftTask.class);
+        for (Data.Editable taskEditable : taskGroup) {
+            ShiftTask task = (ShiftTask) taskEditable;
+            if (task.workArea.equals(area)) {
+                result.add(task.shiftDate);
             }
         }
 
         return result;
+    }
+
+    public static List<WorkArea> getNotReservedAreas(LocalDate date) {
+        HashSet<WorkArea> resultSet = new HashSet<>();
+        var taskGroup = Data.getInstance().getGroup(ShiftTask.class);
+
+        //добавляем все потом удаляем неподходящие
+        for (Data.Editable taskEditable : taskGroup) {
+            ShiftTask task = (ShiftTask) taskEditable;
+            resultSet.add(task.workArea);
+        }
+
+        for (Data.Editable taskEditable : taskGroup) {
+            ShiftTask task = (ShiftTask) taskEditable;
+            if (task.shiftDate.equals(date)) {
+                resultSet.remove(task.workArea);
+            }
+        }
+
+        return resultSet.stream().toList();
     }
 }
