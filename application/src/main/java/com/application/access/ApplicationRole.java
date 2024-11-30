@@ -4,7 +4,7 @@ import com.application.TaskBoard;
 import com.futurefactory.Registrator;
 import com.futurefactory.User;
 import com.futurefactory.User.Permission;
-import com.futurefactory.defaults.DefaultFeature;
+import com.futurefactory.defaults.features.DefaultFeature;
 
 public enum ApplicationRole implements User.Role {
 	COMMERCIAL_SERVICE(
