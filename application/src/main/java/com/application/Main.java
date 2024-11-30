@@ -32,7 +32,6 @@ public class Main{
 			User.register("Коммерческая служба","pass").role=ApplicationRole.COMMERCIAL_SERVICE;
 			User.register("Служба производства","pass").role=ApplicationRole.PRODUCTION_SERVICE;
 			User.register("Служба технолога","pass").role=ApplicationRole.TECH_SERVICE;
-
 			//Регистрация групп элементов
 			customers=new EditableGroup<Customer>(
 				new PathIcon("ui/customer.png",Root.SCREEN_SIZE.width/20,Root.SCREEN_SIZE.width/20),
