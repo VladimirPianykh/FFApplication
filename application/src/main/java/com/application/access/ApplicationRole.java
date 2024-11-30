@@ -24,6 +24,8 @@ public enum ApplicationRole implements User.Role {
 			ApplicationPermission.READ_PRODUCTTYPE,
 			ApplicationPermission.READ_WORKSHOP,
 			ApplicationPermission.READ_TIMBERPRODUCTTASK,
+			ApplicationPermission.CREATE_SHIFTTASK,
+			ApplicationPermission.READ_SHIFTTASK
 		},new User.Feature[]{DefaultFeature.HISTORY,DefaultFeature.MODEL_EDITING}
 	),
 	TECH_SERVICE(
@@ -33,7 +35,9 @@ public enum ApplicationRole implements User.Role {
             ApplicationPermission.READ_WORKSHOP,
 			ApplicationPermission.READ_TIMBERPRODUCTTASK,
 			ApplicationPermission.CREATE_PREPARATIONTASK,
-			ApplicationPermission.READ_PREPARATIONTASK
+			ApplicationPermission.READ_PREPARATIONTASK,
+			ApplicationPermission.CREATE_SHIFTTASK,
+			ApplicationPermission.READ_SHIFTTASK
 		},new User.Feature[]{DefaultFeature.HISTORY,DefaultFeature.MODEL_EDITING,TaskBoard.instance}
 	);
 

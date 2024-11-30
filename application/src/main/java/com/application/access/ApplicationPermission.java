@@ -15,6 +15,8 @@ public enum ApplicationPermission implements User.Permission{
     READ_CUSTOMER,
     READ_WORKSHOP,
     READ_TIMBERPRODUCTTASK,
-    READ_PREPARATIONTASK;
+    READ_PREPARATIONTASK,
+    READ_SHIFTTASK,
+    CREATE_SHIFTTASK;
     static{Registrator.register(values());}
 }
