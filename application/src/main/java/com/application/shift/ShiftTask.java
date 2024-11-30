@@ -5,17 +5,22 @@ import com.application.workshop.WorkArea;
 import com.futurefactory.Data;
 import com.futurefactory.editor.EditorEntry;
 import com.futurefactory.editor.EditorEntryBase;
+import com.futurefactory.editor.VerifiedInput;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ItemEvent;
 import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.util.List;
 
 /**
  * Объект для регистрации задания на смену
+ * Объект должен быть доступен в
+ * разделах Служба производства и Служба технолога
  */
 
+@VerifiedInput(verifier = ShiftTask.Verifier.class)
 public class ShiftTask extends Data.Editable {
     /**
      * Дата создания,
@@ -31,9 +36,9 @@ public class ShiftTask extends Data.Editable {
     public ProductType productType;
     @EditorEntry(translation = "Количество лесопродукции")
     public int quantity;
-    @EditorEntry(translation = "Смена, в которую будет выполняться задание", editorBaseSource = WorkAreaEditor.class)
+    @EditorEntry(translation = "Смена и рабочий участок", editorBaseSource = WorkAreaEditor.class)
     public LocalDate shiftDate;
-    @EditorEntry(translation = "Рабочий участок", editorBaseSource = WorkAreaEditor.class)
+    //@EditorEntry(translation = "Рабочий участок")
     public WorkArea workArea;
     @EditorEntry(translation = "Дополнительное описание")
     public String additionalInfo;
@@ -74,51 +79,83 @@ public class ShiftTask extends Data.Editable {
     /**
      * Реализовать выбор рабочего участка из списка свободных на указанную смену.
      */
-    public class WorkAreaEditor implements EditorEntryBase {
-        JComboBox<WorkArea> areasBox = new JComboBox<>();
+    public static class WorkAreaEditor implements EditorEntryBase {
 
         public Component createEditorBase(Data.Editable o, Field f) {
-            JPanel p = new JPanel(new GridLayout(1, 0));
-            if (f.getType() == WorkArea.class) {
-                List<WorkArea> availableAreas = WorkAreaShiftManager.getNotReservedAreas(shiftDate);
-                WorkArea[] areasArray = new WorkArea[availableAreas.size()];
-                for (int i = 0; i < availableAreas.size(); i++) {
-                    areasArray[i] = availableAreas.get(i);
-                }
-
-                this.areasBox = new JComboBox<>(areasArray);
-                areasBox.addActionListener((e) -> {
-                    workArea = (WorkArea) areasBox.getSelectedItem();
-                });
-                p.add(areasBox);
-
-                return p;
-            } else if (f.getType() == LocalDate.class) {
-                JTextField date = new JTextField();
-
-                date.addActionListener((e) -> {
-                    try {
-                        shiftDate = LocalDate.parse(date.getText());
-
-                        List<WorkArea> availableAreas = WorkAreaShiftManager.getNotReservedAreas(shiftDate);
-                        WorkArea[] areasArray = new WorkArea[availableAreas.size()];
-                        for (int i = 0; i < availableAreas.size(); i++) {
-                            areasArray[i] = availableAreas.get(i);
-                        }
-                        this.areasBox = new JComboBox<>(areasArray);
-                        areasBox.addActionListener((ev) -> {
-                            workArea = (WorkArea) areasBox.getSelectedItem();
-                        });
-                    } catch (Exception exc) {
-                    }
-                });
-
-                p.add(date);
-
-                return p;
+            JPanel p = new JPanel(new GridLayout(1, 2));
+            ShiftTask task = (ShiftTask) o;
+            List<WorkArea> availableAreas = WorkAreaShiftManager.getNotReservedAreas(task.shiftDate);
+            WorkArea[] areasArray = new WorkArea[availableAreas.size()];
+            for (int i = 0; i < availableAreas.size(); i++) {
+                areasArray[i] = availableAreas.get(i);
             }
 
-            throw new UnsupportedOperationException();
+            JComboBox<WorkArea> newBox = new JComboBox<>(areasArray);
+
+            // Добавляем ItemListener для отслеживания изменений выбора
+            newBox.addItemListener(e -> {
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    task.workArea = (WorkArea) newBox.getSelectedItem();
+                    System.out.println("WorkArea updated to: " + newBox.getSelectedItem());
+                }
+            });
+            if (task.workArea != null) {
+                newBox.addItem(task.workArea);
+                newBox.setSelectedItem(task.workArea);
+            }
+
+
+            // Создаём текстовое поле для даты
+            JTextField date = new JTextField();
+            date.setText(task.shiftDate.toString());
+
+            // Добавляем DocumentListener для обработки изменений в поле даты
+            date.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+                @Override
+                public void insertUpdate(javax.swing.event.DocumentEvent e) {
+                    updateDateAndComboBox();
+                }
+
+                @Override
+                public void removeUpdate(javax.swing.event.DocumentEvent e) {
+                    updateDateAndComboBox();
+                }
+
+                @Override
+                public void changedUpdate(javax.swing.event.DocumentEvent e) {
+                    updateDateAndComboBox();
+                }
+
+                private void updateDateAndComboBox() {
+                    try {
+                        // Парсим текст в поле даты и обновляем поле в объекте
+                        LocalDate parsedDate = LocalDate.parse(date.getText());
+                        task.shiftDate = parsedDate;
+                        System.out.println("Date updated to: " + parsedDate);
+                        // Обновляем значения newBox (WorkArea)
+                        updateComboBox(newBox, parsedDate);
+
+                    } catch (Exception ex) {
+                        System.out.println("Invalid date format: " + date.getText());
+                    }
+                }
+            });
+
+            p.add(date);
+            p.add(newBox);
+
+            return p;
         }
+
+
+        private void updateComboBox(JComboBox<WorkArea> newBox, LocalDate date) {
+            List<WorkArea> availableAreas = WorkAreaShiftManager.getNotReservedAreas(date);
+            newBox.removeAllItems(); // Удаляем старые элементы
+            for (WorkArea area : availableAreas) {
+                newBox.addItem(area); // Добавляем новые значения
+            }
+            System.out.println("ComboBox updated with areas for date: " + date);
+        }
+
     }
 }
