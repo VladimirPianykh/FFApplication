@@ -1,9 +1,11 @@
 package com.application;
 
+import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Composite;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -93,6 +95,7 @@ public class TaskBoard implements Feature{
 		g2.setStroke(new BasicStroke(s/20));
 		g2.drawPolygon(new int[]{s/2,s/4,s/2,s/3,s/2,s/2,s/2,s*2/3,s/2,s*3/4,s/2,s*2/3,s/2,s/2,s/2,s/3,s/2},
 					 new int[]{s/2,s/2,s/2,s/3,s/2,s/4,s/2,s/3,s/2,s/2,s/2,s*2/3,s/2,s*3/4,s/2,s*2/3,s/2},16);
+        g2.fillOval(s/3,s/3,s/3,s/3);
 	}
 	public String toString(){return "Рабочий стол";}
 	private static class TaskTableCellRenderer extends DefaultTableCellRenderer{
