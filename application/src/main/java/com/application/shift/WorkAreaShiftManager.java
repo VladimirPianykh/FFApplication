@@ -6,10 +6,7 @@ import com.application.workshop.manager.WorkAreaManager;
 import com.futurefactory.Data;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Класс для хранения информации о занятости участков.
@@ -20,6 +17,7 @@ public class WorkAreaShiftManager {
     private WorkAreaShiftManager() {
     }
 
+    //Нигде не используется, но пусть будет
     public static List<LocalDate> getReservedDates(WorkArea area) {
         List<LocalDate> result = new LinkedList<>();
 
@@ -34,24 +32,57 @@ public class WorkAreaShiftManager {
         return result;
     }
 
-    public static List<WorkArea> getNotReservedAreas(LocalDate date) {
-        ArrayList<ShiftTask>tasks=ShiftTaskBoard.instance.tasks;
-        var areas = WorkAreaManager.getAreas();
-        System.out.println("tasks: " + tasks.size());
-        System.out.println("areas: " + areas.size());
-        System.out.println("date: " + date);
+    /**
+     * @param task задание на смену
+     * @return (количество уже занятых единиц + task.quantity >= 0)
+     */
+    public static boolean quantityMatchesLimit(ShiftTask task) {
+        var taskGroup = Data.getInstance().getGroup(ShiftTask.class);
 
-        //добавляем все потом удаляем неподходящие
-        HashSet<WorkArea> resultSet = new HashSet<>(areas);
+        int availablePerf = task.workArea.performance;
 
-        for (Data.Editable taskEditable : tasks) {
-            ShiftTask task = (ShiftTask) taskEditable;
-            if (task.shiftDate.equals(date)) {
-                resultSet.remove(task.workArea);
+        for (Data.Editable taskEditable : taskGroup) {
+            ShiftTask curTask = (ShiftTask) taskEditable;
+            if (curTask.shiftDate.equals(task.shiftDate)
+                && curTask.workArea.equals(task.workArea)
+                && curTask.equals(task) == false
+            ) {
+                availablePerf -= curTask.quantity;
             }
         }
 
-        System.out.println("result: " + resultSet.size());
-        return resultSet.stream().toList();
+        return availablePerf >= task.quantity;
+    }
+
+    /**
+     *
+     * @param date
+     * @return Список участков для которых есть хоть 1 свободная единица производства
+     */
+    public static List<WorkArea> getNotReservedAreas(LocalDate date) {
+        ArrayList<ShiftTask>tasks=ShiftTaskBoard.instance.tasks;
+        var areas = WorkAreaManager.getAreas();
+
+        HashMap<WorkArea, Integer> availableMap = new HashMap<>();
+
+        for (var area : areas) {
+            availableMap.put(area, area.performance);
+        }
+
+        for (Data.Editable taskEditable : tasks) {
+            ShiftTask task = (ShiftTask) taskEditable;
+            if (task.shiftDate.equals(date) && availableMap.containsKey(task.workArea)) {
+                availableMap.put(task.workArea, availableMap.get(task.workArea) - task.quantity);
+            }
+        }
+
+        List<WorkArea> availableAreas = new ArrayList<>();
+        for(var entry : availableMap.entrySet()) {
+            if(entry.getValue() > 0) {
+                availableAreas.add(entry.getKey());
+            }
+        }
+
+        return availableAreas;
     }
 }
