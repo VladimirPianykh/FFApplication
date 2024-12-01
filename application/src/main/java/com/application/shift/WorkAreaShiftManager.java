@@ -37,13 +37,14 @@ public class WorkAreaShiftManager {
      * @return (количество уже занятых единиц + task.quantity >= 0)
      */
     public static boolean quantityMatchesLimit(ShiftTask task) {
-        var taskGroup = Data.getInstance().getGroup(ShiftTask.class);
+        ArrayList<ShiftTask>tasks=ShiftTaskBoard.instance.tasks;
 
         int availablePerf = task.workArea.performance;
 
-        for (Data.Editable taskEditable : taskGroup) {
-            ShiftTask curTask = (ShiftTask) taskEditable;
-            if (curTask.shiftDate.equals(task.shiftDate)
+        for (ShiftTask taskEditable : tasks) {
+            ShiftTask curTask = taskEditable;
+            if (curTask != null && curTask.shiftDate != null && curTask.workArea != null
+                && curTask.shiftDate.equals(task.shiftDate)
                 && curTask.workArea.equals(task.workArea)
                 && curTask.equals(task) == false
             ) {
