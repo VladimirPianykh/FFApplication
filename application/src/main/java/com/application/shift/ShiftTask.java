@@ -60,7 +60,6 @@ public class ShiftTask extends Data.Editable {
         this.shiftDate = shiftDate;
         this.workArea = workArea;
         this.additionalInfo = additionalInfo == null ? "" : additionalInfo;
-        ShiftTaskBoard.instance.tasks.add(this);
     }
 
     public ShiftTask() {

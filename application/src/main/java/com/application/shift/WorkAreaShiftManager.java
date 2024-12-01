@@ -22,8 +22,7 @@ public class WorkAreaShiftManager {
         List<LocalDate> result = new LinkedList<>();
 
         ArrayList<ShiftTask>tasks=ShiftTaskBoard.instance.tasks;
-        for (Data.Editable taskEditable : tasks) {
-            ShiftTask task = (ShiftTask) taskEditable;
+        for (ShiftTask task : tasks) {
             if (task.workArea.equals(area)) {
                 result.add(task.shiftDate);
             }
@@ -41,8 +40,7 @@ public class WorkAreaShiftManager {
 
         int availablePerf = task.workArea.performance;
 
-        for (ShiftTask taskEditable : tasks) {
-            ShiftTask curTask = taskEditable;
+        for (ShiftTask curTask : tasks) {
             if (curTask != null && curTask.shiftDate != null && curTask.workArea != null
                 && curTask.shiftDate.equals(task.shiftDate)
                 && curTask.workArea.equals(task.workArea)
@@ -70,8 +68,7 @@ public class WorkAreaShiftManager {
             availableMap.put(area, area.performance);
         }
 
-        for (Data.Editable taskEditable : tasks) {
-            ShiftTask task = (ShiftTask) taskEditable;
+        for (ShiftTask task : tasks) {
             if (task.shiftDate.equals(date) && availableMap.containsKey(task.workArea)) {
                 availableMap.put(task.workArea, availableMap.get(task.workArea) - task.quantity);
             }
@@ -86,8 +83,20 @@ public class WorkAreaShiftManager {
 
         return availableAreas;
     }
-    public static int getPerformanceOccupied(WorkArea area) {
-        //TODO @borisaushev: посчитать, сколько производительности используется сейчас всеми заданиями (сумма quantity)
-        throw new UnsupportedOperationException();
+    public static int getPerformanceOccupied(WorkArea workArea, LocalDate shiftDate) {
+        ArrayList<ShiftTask>tasks=ShiftTaskBoard.instance.tasks;
+
+        int usedPerf = 0;
+
+        for (ShiftTask curTask : tasks) {
+            if (curTask != null && curTask.shiftDate != null && curTask.workArea != null
+                    && curTask.shiftDate.equals(shiftDate)
+                    && curTask.workArea.equals(workArea)
+            ) {
+                usedPerf += curTask.quantity;
+            }
+        }
+
+        return usedPerf;
     }
 }
