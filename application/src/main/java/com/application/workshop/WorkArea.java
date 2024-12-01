@@ -26,7 +26,7 @@ public class WorkArea extends Editable{
 		}
 	}
 
-	//TODO: разобраться не забыли ли об этом поле(негде сейчас не используется)
+	//TODO: разобраться не забыли ли об этом поле(нигде сейчас не используется)
 	@EditorEntry(translation="Информация")
 	public String description;
 	@EditorEntry(translation="Производительность")

@@ -1,10 +1,12 @@
 package com.application.shift;
 
+import com.application.ShiftTaskBoard;
 import com.application.workshop.WorkArea;
 import com.application.workshop.manager.WorkAreaManager;
 import com.futurefactory.Data;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -21,8 +23,8 @@ public class WorkAreaShiftManager {
     public static List<LocalDate> getReservedDates(WorkArea area) {
         List<LocalDate> result = new LinkedList<>();
 
-        var taskGroup = Data.getInstance().getGroup(ShiftTask.class);
-        for (Data.Editable taskEditable : taskGroup) {
+        ArrayList<ShiftTask>tasks=ShiftTaskBoard.instance.tasks;
+        for (Data.Editable taskEditable : tasks) {
             ShiftTask task = (ShiftTask) taskEditable;
             if (task.workArea.equals(area)) {
                 result.add(task.shiftDate);
@@ -33,16 +35,16 @@ public class WorkAreaShiftManager {
     }
 
     public static List<WorkArea> getNotReservedAreas(LocalDate date) {
-        var taskGroup = Data.getInstance().getGroup(ShiftTask.class);
+        ArrayList<ShiftTask>tasks=ShiftTaskBoard.instance.tasks;
         var areas = WorkAreaManager.getAreas();
-        System.out.println("tasks: " + taskGroup.size());
+        System.out.println("tasks: " + tasks.size());
         System.out.println("areas: " + areas.size());
         System.out.println("date: " + date);
 
         //добавляем все потом удаляем неподходящие
         HashSet<WorkArea> resultSet = new HashSet<>(areas);
 
-        for (Data.Editable taskEditable : taskGroup) {
+        for (Data.Editable taskEditable : tasks) {
             ShiftTask task = (ShiftTask) taskEditable;
             if (task.shiftDate.equals(date)) {
                 resultSet.remove(task.workArea);

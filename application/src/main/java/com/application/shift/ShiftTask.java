@@ -1,6 +1,7 @@
 package com.application.shift;
 
 import com.application.ProductType;
+import com.application.ShiftTaskBoard;
 import com.application.workshop.WorkArea;
 import com.futurefactory.Data;
 import com.futurefactory.editor.EditorEntry;
@@ -57,6 +58,7 @@ public class ShiftTask extends Data.Editable {
         this.shiftDate = shiftDate;
         this.workArea = workArea;
         this.additionalInfo = additionalInfo == null ? "" : additionalInfo;
+        ShiftTaskBoard.instance.tasks.add(this);
     }
 
     public ShiftTask() {
