@@ -24,7 +24,7 @@ import javax.swing.JPanel;
 @VerifiedInput(verifier=TimberProductTask.Verifier.class)
 public class TimberProductTask extends Data.Editable{
 	public static class Verifier implements com.futurefactory.editor.Verifier{
-		public boolean verify(Editable editable){ //TODO: add "isNew" parameter
+		public boolean verify(Editable editable,boolean isNew){
 			TimberProductTask e=(TimberProductTask)editable;
 			if(e.validateFields(e.registrationDate,e.startDate,e.order,e.productType,e.quantity,e.productionWorkshops)){e.order.status=OrderStatus.IN_PRODUCTION;return true;}
 			return false;

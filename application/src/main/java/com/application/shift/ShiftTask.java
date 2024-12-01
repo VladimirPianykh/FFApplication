@@ -72,7 +72,7 @@ public class ShiftTask extends Data.Editable {
      */
     public static class Verifier implements com.futurefactory.editor.Verifier {
         @Override
-        public boolean verify(Data.Editable editable) {
+        public boolean verify(Data.Editable editable, boolean isNew) {
             ShiftTask task = (ShiftTask) editable;
             return task.shiftDate != null
                     && task.productType != null

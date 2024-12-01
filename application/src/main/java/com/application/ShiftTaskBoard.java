@@ -11,6 +11,11 @@ import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
 import javax.swing.JLabel;
@@ -34,7 +39,15 @@ import com.futurefactory.User.Feature;
  */
 public class ShiftTaskBoard implements Feature{
 	public static final ShiftTaskBoard instance=new ShiftTaskBoard();
-	public ArrayList<ShiftTask>tasks=new ArrayList<>();
+	public ArrayList<ShiftTask>tasks;
+	@SuppressWarnings("unchecked")
+	public ShiftTaskBoard(){
+		try{
+			ObjectInputStream ois=new ObjectInputStream(new FileInputStream(Root.folder+"Shift tasks.ser"));
+			tasks=(ArrayList<ShiftTask>)ois.readObject();
+			ois.close();
+		}catch(IOException ex){tasks=new ArrayList<>();}catch(ClassNotFoundException ex){throw new RuntimeException(ex);}
+	}
 	@SuppressWarnings("unchecked")
 	public void fillTab(JPanel content,JPanel tab,Font font){
 		JPanel taskPanel=new JPanel(new GridLayout(0,1));
@@ -75,7 +88,7 @@ public class ShiftTaskBoard implements Feature{
 			private ShiftTask t;
 			public TaskButton(ShiftTask t){
 				this.t=t;
-				addActionListener(e->{ProgramStarter.editor.constructEditor(t);});
+				addActionListener(e->{ProgramStarter.editor.constructEditor(t,false);});
 			}
 			public void paint(Graphics g){
 				super.paintComponent(g);
@@ -89,6 +102,7 @@ public class ShiftTaskBoard implements Feature{
 		}
 		addTask.addActionListener(e->{
 			tasks.add(new ShiftTask());
+			save();
 			taskPanel.add(new TaskButton(tasks.getLast()));
 			taskPanel.revalidate();
 		});
@@ -102,7 +116,7 @@ public class ShiftTaskBoard implements Feature{
 			private WorkArea w;
 			public AreaLabel(WorkArea w){
 				this.w=w;
-				setPreferredSize(new Dimension(Root.SCREEN_SIZE.height/8, Root.SCREEN_SIZE.height/8));
+				setPreferredSize(new Dimension(Root.SCREEN_SIZE.height/8,Root.SCREEN_SIZE.height/8));
 				setOpaque(false);
 			}
 			public void paint(Graphics g){
@@ -123,6 +137,9 @@ public class ShiftTaskBoard implements Feature{
 		tab.add(addTask);
 		tab.add(s);
 		tab.add(areaPanel);
+		Runtime.getRuntime().addShutdownHook(new Thread(){
+			public void run(){save();}
+		});
 	}
 	public void paint(Graphics2D g2,BufferedImage image,int s){
 		g2.setStroke(new BasicStroke(s/50));
@@ -131,4 +148,11 @@ public class ShiftTaskBoard implements Feature{
 		g2.drawLine(s/4,s*2/3,s*3/4,s*2/3);
 	}
 	public String toString(){return "Задания на смену";}
+	public void save(){
+		try{
+			ObjectOutputStream oos=new ObjectOutputStream(new FileOutputStream(Root.folder+"Shift tasks.ser"));
+			oos.writeObject(tasks);
+			oos.close();
+		}catch(IOException ex){}
+	}
 }
