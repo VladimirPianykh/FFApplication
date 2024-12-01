@@ -47,6 +47,9 @@ public class ShiftTaskBoard implements Feature{
 			tasks=(ArrayList<ShiftTask>)ois.readObject();
 			ois.close();
 		}catch(IOException ex){tasks=new ArrayList<>();}catch(ClassNotFoundException ex){throw new RuntimeException(ex);}
+		Runtime.getRuntime().addShutdownHook(new Thread(){
+			public void run(){save();}
+		});
 	}
 	@SuppressWarnings("unchecked")
 	public void fillTab(JPanel content,JPanel tab,Font font){
@@ -137,9 +140,6 @@ public class ShiftTaskBoard implements Feature{
 		tab.add(addTask);
 		tab.add(s);
 		tab.add(areaPanel);
-		Runtime.getRuntime().addShutdownHook(new Thread(){
-			public void run(){save();}
-		});
 	}
 	public void paint(Graphics2D g2,BufferedImage image,int s){
 		g2.setStroke(new BasicStroke(s/50));
