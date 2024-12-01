@@ -26,8 +26,27 @@ public class TimberProductTask extends Data.Editable{
 	public static class Verifier implements com.futurefactory.editor.Verifier{
 		public boolean verify(Editable editable,boolean isNew){
 			TimberProductTask e=(TimberProductTask)editable;
-			if(e.validateFields(e.registrationDate,e.startDate,e.order,e.productType,e.quantity,e.productionWorkshops)){e.order.status=OrderStatus.IN_PRODUCTION;return true;}
-			return false;
+			if(e.registrationDate==null||e.startDate==null){
+				System.err.println("Дата регистрации и дата начала производства не могут быть null.");
+				return false;
+			}else if(!e.startDate.isAfter(e.registrationDate)){
+				System.err.println("Дата начала производства должна быть позже даты регистрации.");
+				return false;
+			}else if(e.order==null||(isNew&&e.order.status!=OrderStatus.APPROVED)){
+				System.err.println("Задание на производство можно зарегистрировать только по заказу со статусом 'Согласовано клиентом'.");
+				return false;
+			}else if(e.productType==null){
+				System.err.println("Вид лесопродукции должен быть указан.");
+				return false;
+			}else if(e.quantity<=0){
+				System.err.println("Количество лесопродукции должно быть больше нуля.");
+				return false;
+			}else if(e.productionWorkshops==null||e.productionWorkshops.isEmpty()){
+				System.err.println("Необходимо указать цеха для изготовления лесопродукции.");
+				return false;
+			}
+			e.order.status=OrderStatus.IN_PRODUCTION;
+			return true;
 		}
 	}
 	public static class WorkshopListEditor implements EditorEntryBase{
@@ -75,7 +94,7 @@ public class TimberProductTask extends Data.Editable{
 							 Order order,ProductType productType,
 							 int quantity,List<Workshop>productionWorkshops,
 							 String additionalInfo){
-		super("Задание на производство"); //Это не задание обработки! Это задание на производство
+		super("Задание на производство");
 		this.registrationDate=LocalDate.now();
 		this.startDate=startDate;
 		this.order=order;
@@ -83,33 +102,6 @@ public class TimberProductTask extends Data.Editable{
 		this.quantity=quantity;
 		this.productionWorkshops=productionWorkshops;
 		this.additionalInfo=additionalInfo;
-		//Не логично: мы сначала регистрируем заказ, а уже потом проверяем на валидность
-		validateFields(registrationDate,startDate,order,productType,quantity,productionWorkshops);
-	}
-	private boolean validateFields(LocalDate registrationDate,LocalDate startDate,
-								Order order,ProductType productType,
-								int quantity,List<Workshop>productionWorkshops){
-		//Оставил все условия из тз чтобы легче было рефакторить
-		if(registrationDate==null||startDate==null){
-			System.err.println("Дата регистрации и дата начала производства не могут быть null.");
-			return false;
-		}else if(!startDate.isAfter(registrationDate)){
-			System.err.println("Дата начала производства должна быть позже даты регистрации.");
-			return false;
-		}else if(order==null||OrderStatus.APPROVED!=order.status){
-			System.err.println("Задание на производство можно зарегистрировать только по заказу со статусом 'Согласовано клиентом'.");
-			return false;
-		}else if(productType==null){
-			System.err.println("Вид лесопродукции должен быть указан.");
-			return false;
-		}else if(quantity<=0){
-			System.err.println("Количество лесопродукции должно быть больше нуля.");
-			return false;
-		}else if(productionWorkshops==null||productionWorkshops.isEmpty()){
-			System.err.println("Необходимо указать цеха для изготовления лесопродукции.");
-			return false;
-		}
-		return true;
 	}
 	public TimberProductTask(){
 		this(LocalDate.now().plusDays(3),null,null,1,new ArrayList<Workshop>(),"");
