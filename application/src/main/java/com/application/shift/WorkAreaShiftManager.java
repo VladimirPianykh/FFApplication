@@ -54,4 +54,8 @@ public class WorkAreaShiftManager {
         System.out.println("result: " + resultSet.size());
         return resultSet.stream().toList();
     }
+    public static int getPerformanceOccupied(WorkArea area) {
+        //TODO @borisaushev: посчитать, сколько производительности используется сейчас всеми заданиями (сумма quantity)
+        throw new UnsupportedOperationException();
+    }
 }
