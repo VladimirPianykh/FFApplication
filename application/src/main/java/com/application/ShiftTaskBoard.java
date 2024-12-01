@@ -73,14 +73,17 @@ public class ShiftTaskBoard implements Feature{
 			private ShiftTask t;
 			public TaskButton(ShiftTask t){
 				this.t=t;
-				addActionListener(e->{ProgramStarter.editor.constructEditor(t,false);});
+				addActionListener(e->{
+					ProgramStarter.editor.constructEditor(t,false);
+					tab.repaint();
+				});
 			}
 			public void paint(Graphics g){
 				super.paintComponent(g);
 				Graphics2D g2=(Graphics2D)g;
 				FontMetrics fm=g2.getFontMetrics();
 				g2.setColor(Color.BLACK);
-				g2.drawString(t.name.toString(),getWidth()/30,(getHeight()+fm.getAscent()+fm.getLeading()-fm.getDescent())/2);
+				g2.drawString(t.name,getWidth()/30,(getHeight()+fm.getAscent()+fm.getLeading()-fm.getDescent())/2);
 				g2.setColor(Color.DARK_GRAY);
 				g2.drawString(t.shiftDate.toString(),getWidth()*29/30-fm.stringWidth(t.shiftDate.toString()),(getHeight()+fm.getAscent()+fm.getLeading()-fm.getDescent())/2);
 			}
@@ -88,12 +91,15 @@ public class ShiftTaskBoard implements Feature{
 		addTask.addActionListener(e->{
 			ShiftTask task=new ShiftTask();
 			Data.getInstance().getGroup(ShiftTask.class).add(task);
+			ProgramStarter.editor.constructEditor(task,true);
 			taskPanel.add(new TaskButton(task));
 			taskPanel.revalidate();
+			tab.repaint();
+			Data.save();
 		});
 		for(ShiftTask t:(EditableGroup<ShiftTask>)Data.getInstance().getGroup(ShiftTask.class)){TaskButton b=new TaskButton(t);taskPanel.add(b);}
 		taskPanel.doLayout();
-		for(Component c:taskPanel.getComponents())c.setFont(new Font(Font.DIALOG,Font.ITALIC,c.getHeight()/2));
+		// for(Component c:taskPanel.getComponents())c.setFont(new Font(Font.DIALOG,Font.PLAIN,c.getHeight()/2));
 		JPanel areaPanel=new JPanel();
 		areaPanel.setBounds(tab.getWidth()*7/10,tab.getHeight()/10,tab.getWidth()/5,tab.getHeight()*4/5);
 		areaPanel.setBackground(Color.DARK_GRAY);
@@ -112,6 +118,7 @@ public class ShiftTaskBoard implements Feature{
 				FontMetrics fm=g2.getFontMetrics();
 				g2.setColor(Color.WHITE);
 				g2.drawString(w.name,(getWidth()-fm.stringWidth(w.name))/2,getHeight()/10+fm.getAscent()+fm.getLeading()-fm.getDescent());
+				//TODO: add date choice
 				String s=w.performance==Integer.MAX_VALUE?"неограничено":(w.performance-WorkAreaShiftManager.getPerformanceOccupied(w,LocalDate.now()))+"/"+w.performance;
 				g2.drawString(s,(getWidth()-fm.stringWidth(s))/2,(getHeight()+fm.getAscent()+fm.getLeading()-fm.getDescent())/2);
 				g2.setStroke(new BasicStroke(getHeight()/20));
