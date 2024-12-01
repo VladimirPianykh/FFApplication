@@ -6,6 +6,7 @@ import com.application.order.OrderStatus;
 import com.application.shift.ShiftTask;
 import com.application.workshop.WorkArea;
 import com.application.workshop.Workshop;
+import com.application.workshop.manager.WorkAreaManager;
 import com.application.workshop.preparation.PreparationTask;
 import com.application.workshop.preparation.WorkshopPrepStatus;
 import com.application.workshop.timber.TimberProductTask;
@@ -155,6 +156,8 @@ public class Main{
 			for(WorkArea area:workshops.get(3).parts) preparationTasks.add(new PreparationTask(LocalDate.now().plusDays(1),productionTasks.get(2),area,"Описание4",WorkshopPrepStatus.CREATED));
 			shiftTasks.add(new ShiftTask(productTypes.get(0), 1, LocalDate.now().plusDays(3), workshops.get(2).parts[0], ""));
 			Data.save();
+			//Сохранение изменений для участков
+			WorkAreaManager.save();
 		}
 	}
 }

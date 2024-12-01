@@ -26,7 +26,7 @@ public class ShiftTask extends Data.Editable {
      * Дата создания,
      * Вид лесопродукции,
      * Количество лесопродукции,
-     * Смена, в которую будет выполняться задание (для простоты берем, что смена – это день, т.е. здесь указывается конкретная дата, например, смена: 25.10.2024)
+     * Смена, в которую будет выполняться задание (для простоты берем, что смена – это день, т.е. Здесь указывается конкретная дата, например, смена: 25.10.2024)
      * Рабочий участок
      * Дополнительное описание (произвольное текстовое описание, многострочное поле).
      */
@@ -36,9 +36,11 @@ public class ShiftTask extends Data.Editable {
     public ProductType productType;
     @EditorEntry(translation = "Количество лесопродукции")
     public int quantity;
-    @EditorEntry(translation = "Смена и рабочий участок", editorBaseSource = WorkAreaEditor.class)
+    @EditorEntry(translation = "Смена и рабочий участок", editorBaseSource = WorkAreaAndShiftDateEditor.class)
     public LocalDate shiftDate;
-    //@EditorEntry(translation = "Рабочий участок")
+    /**
+     * Панель для редактирования участка объединена в панель для смены
+     */
     public WorkArea workArea;
     @EditorEntry(translation = "Дополнительное описание")
     public String additionalInfo;
@@ -72,18 +74,30 @@ public class ShiftTask extends Data.Editable {
             ShiftTask task = (ShiftTask) editable;
             return task.shiftDate != null
                     && task.productType != null
-                    && task.workArea != null;
+                    && task.workArea != null
+                    && WorkAreaShiftManager.quantityMatchesLimit(task);
         }
     }
 
     /**
      * Реализовать выбор рабочего участка из списка свободных на указанную смену.
      */
-    public static class WorkAreaEditor implements EditorEntryBase {
+    public static class WorkAreaAndShiftDateEditor implements EditorEntryBase {
 
+        /**
+         * Класс предназначен только для ShiftTask, Не использовать в других случаях!!!
+         * Создаем панель и накидываем на нее связанные поля для даты смены и доступных на это время участков.
+         * Логика такая:
+         * Каждый раз при обновлении поля для смены мы парсим введенную дату и ищем участки,
+         * на которых в эту дату есть хоть 1 свободная единица производительности.
+         * Эти участки теперь помещаем в JComboBox для выбора участка
+         *
+         * Проверку на quantity делает класс verifier
+         */
         public Component createEditorBase(Data.Editable o, Field f) {
             JPanel p = new JPanel(new GridLayout(1, 2));
             ShiftTask task = (ShiftTask) o;
+            //Берем все участки на которых есть хоть 1 свободная единица производительности
             List<WorkArea> availableAreas = WorkAreaShiftManager.getNotReservedAreas(task.shiftDate);
             WorkArea[] areasArray = new WorkArea[availableAreas.size()];
             for (int i = 0; i < availableAreas.size(); i++) {
@@ -100,6 +114,7 @@ public class ShiftTask extends Data.Editable {
                 }
             });
             if (task.workArea != null) {
+                newBox.removeItem(task.workArea);
                 newBox.addItem(task.workArea);
                 newBox.setSelectedItem(task.workArea);
             }
