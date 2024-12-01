@@ -1,7 +1,6 @@
 package com.application.shift;
 
 import com.application.ProductType;
-import com.application.ShiftTaskBoard;
 import com.application.workshop.WorkArea;
 import com.futurefactory.Data;
 import com.futurefactory.editor.EditorEntry;
