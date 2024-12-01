@@ -1,0 +1,64 @@
+{
+	"Add new editable field":{
+		"scope":"java",
+		"prefix":"_ef",
+		"body":[
+			"@EditorEntry(translation=\"$1\")",
+			"public $2;"
+		],
+		"description":"Add a new field with EditorEntry annotation"
+	},
+	"Start application":{
+		"scope":"java",
+		"prefix":"_start",
+		"body":[
+			"ProgramStarter.authRequired=${1|true,false|};",
+			"$2",
+			"ProgramStarter.runProgram();"
+		],
+		"description":"Fill the `main()` method"
+	},
+	"Create default classes":{
+		"scope":"java",
+		"prefix":"_init",
+		"body":[
+			"public enum ApplicationRole implements Role{",
+				"\t$1(",
+					"\t\tnew Permission[]{},",
+					"\t\tnew Feature[]{}",
+				"\t);",
+				"\tprivate ApplicationRole(Permission[]p,Feature[]f){Registrator.register(this,f,p);}",
+			"}",
+			"public enum ApplicationPermission implements Permission{",
+				"\t$2;",
+				"\tprivate ApplicationPermission(){Registrator.register(this);}",
+			"}"
+		],
+		"description":"Create Role and Permission enum-implementations"
+	},
+	"Define a new Editable subclass":{
+		"scope":"java",
+		"prefix":"_editable",
+		"body":[
+			"public class ${TM_FILENAME_BASE} extends Editable{",
+				"\t$0",
+				"\tpublic ${TM_FILENAME_BASE}(){",
+					"\t\tsuper(\"Новый $1\");",
+				"\t}",
+			"}"
+		],
+		"description":"Create an Editable subclass"
+	},
+	"Register a new EditableGroup":{
+		"scope":"java",
+		"prefix":"_group",
+		"body":[
+			"EditableGroup<$1>group=new EditableGroup<$1>(",
+				"\tnew PathIcon(\"ui/$2.png\",Root.SCREEN_SIZE.height/11,Root.SCREEN_SIZE.height/11),",
+				"\tnew PathIcon(\"ui/$3.png\",Root.SCREEN_SIZE.height/11,Root.SCREEN_SIZE.height/11),",
+				"\t$1.class",
+			");"
+		],
+		"description":"Create an Editable subclass"
+	}
+}

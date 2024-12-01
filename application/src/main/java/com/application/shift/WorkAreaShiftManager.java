@@ -1,5 +1,6 @@
 package com.application.shift;
 
+import com.application.ShiftTaskBoard;
 import com.application.workshop.WorkArea;
 import com.application.workshop.manager.WorkAreaManager;
 import com.futurefactory.Data;
@@ -20,8 +21,8 @@ public class WorkAreaShiftManager {
     public static List<LocalDate> getReservedDates(WorkArea area) {
         List<LocalDate> result = new LinkedList<>();
 
-        var taskGroup = Data.getInstance().getGroup(ShiftTask.class);
-        for (Data.Editable taskEditable : taskGroup) {
+        ArrayList<ShiftTask>tasks=ShiftTaskBoard.instance.tasks;
+        for (Data.Editable taskEditable : tasks) {
             ShiftTask task = (ShiftTask) taskEditable;
             if (task.workArea.equals(area)) {
                 result.add(task.shiftDate);
@@ -59,7 +60,7 @@ public class WorkAreaShiftManager {
      * @return Список участков для которых есть хоть 1 свободная единица производства
      */
     public static List<WorkArea> getNotReservedAreas(LocalDate date) {
-        var taskGroup = Data.getInstance().getGroup(ShiftTask.class);
+        ArrayList<ShiftTask>tasks=ShiftTaskBoard.instance.tasks;
         var areas = WorkAreaManager.getAreas();
 
         HashMap<WorkArea, Integer> availableMap = new HashMap<>();
@@ -68,7 +69,7 @@ public class WorkAreaShiftManager {
             availableMap.put(area, area.performance);
         }
 
-        for (Data.Editable taskEditable : taskGroup) {
+        for (Data.Editable taskEditable : tasks) {
             ShiftTask task = (ShiftTask) taskEditable;
             if (task.shiftDate.equals(date) && availableMap.containsKey(task.workArea)) {
                 availableMap.put(task.workArea, availableMap.get(task.workArea) - task.quantity);

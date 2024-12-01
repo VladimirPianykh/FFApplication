@@ -3,7 +3,6 @@ package com.application;
 import com.application.access.ApplicationRole;
 import com.application.order.Order;
 import com.application.order.OrderStatus;
-import com.application.shift.ShiftTask;
 import com.application.workshop.WorkArea;
 import com.application.workshop.Workshop;
 import com.application.workshop.manager.WorkAreaManager;
@@ -28,14 +27,12 @@ public class Main{
 		EditableGroup<Workshop>workshops=null;
 		EditableGroup<TimberProductTask>productionTasks=null;
 		EditableGroup<PreparationTask>preparationTasks=null;
-		EditableGroup<ShiftTask>shiftTasks=null;
 		boolean firstLaunch=ProgramStarter.isFirstLaunch();
 		if(firstLaunch){
 			//Регистрация служб
 			User.register("Коммерческая служба","pass").role=ApplicationRole.COMMERCIAL_SERVICE;
 			User.register("Служба производства","pass").role=ApplicationRole.PRODUCTION_SERVICE;
 			User.register("Служба технолога","pass").role=ApplicationRole.TECH_SERVICE;
-
 			//Регистрация групп элементов
 			customers=new EditableGroup<Customer>(
 				new PathIcon("ui/customer.png",Root.SCREEN_SIZE.width/20,Root.SCREEN_SIZE.width/20),
@@ -89,18 +86,12 @@ public class Main{
 				new PathIcon("ui/order_add.png",Root.SCREEN_SIZE.width/20,Root.SCREEN_SIZE.width/20),
 				PreparationTask.class
 			);
-			shiftTasks=new EditableGroup<>(
-				new PathIcon("ui/order.png",Root.SCREEN_SIZE.width/20,Root.SCREEN_SIZE.width/20),
-				new PathIcon("ui/order_add.png",Root.SCREEN_SIZE.width/20,Root.SCREEN_SIZE.width/20),
-				ShiftTask.class
-			);
 			Registrator.register(customers);
 			Registrator.register(productTypes);
 			Registrator.register(orders);
 			Registrator.register(workshops);
 			Registrator.register(productionTasks);
 			Registrator.register(preparationTasks);
-			Registrator.register(shiftTasks);
 		}
 		ProgramStarter.welcomeMessage="Добро пожаловать в \"Лесозавод №10 Белка\".\nВыберите службу,чтобы продолжить.";
 		ProgramStarter.authRequired=false;
@@ -154,7 +145,6 @@ public class Main{
 			for(WorkArea area:workshops.get(1).parts) preparationTasks.add(new PreparationTask(LocalDate.now().plusDays(1),productionTasks.get(1),area,"Описание2",WorkshopPrepStatus.CREATED));
 			for(WorkArea area:workshops.get(2).parts) preparationTasks.add(new PreparationTask(LocalDate.now().plusDays(1),productionTasks.get(2),area,"Описание3",WorkshopPrepStatus.CREATED));
 			for(WorkArea area:workshops.get(3).parts) preparationTasks.add(new PreparationTask(LocalDate.now().plusDays(1),productionTasks.get(2),area,"Описание4",WorkshopPrepStatus.CREATED));
-			shiftTasks.add(new ShiftTask(productTypes.get(0), 1, LocalDate.now().plusDays(3), workshops.get(2).parts[0], ""));
 			Data.save();
 			//Сохранение изменений для участков
 			WorkAreaManager.save();

@@ -1,5 +1,6 @@
 package com.application.access;
 
+import com.application.ShiftTaskBoard;
 import com.application.TaskBoard;
 import com.futurefactory.Registrator;
 import com.futurefactory.User;
@@ -24,9 +25,7 @@ public enum ApplicationRole implements User.Role {
 			ApplicationPermission.READ_PRODUCTTYPE,
 			ApplicationPermission.READ_WORKSHOP,
 			ApplicationPermission.READ_TIMBERPRODUCTTASK,
-			ApplicationPermission.CREATE_SHIFTTASK,
-			ApplicationPermission.READ_SHIFTTASK
-		},new User.Feature[]{DefaultFeature.HISTORY,DefaultFeature.MODEL_EDITING}
+		},new User.Feature[]{DefaultFeature.HISTORY,DefaultFeature.MODEL_EDITING,ShiftTaskBoard.instance}
 	),
 	TECH_SERVICE(
 		new ApplicationPermission[]{
@@ -36,9 +35,7 @@ public enum ApplicationRole implements User.Role {
 			ApplicationPermission.READ_TIMBERPRODUCTTASK,
 			ApplicationPermission.CREATE_PREPARATIONTASK,
 			ApplicationPermission.READ_PREPARATIONTASK,
-			ApplicationPermission.CREATE_SHIFTTASK,
-			ApplicationPermission.READ_SHIFTTASK
-		},new User.Feature[]{DefaultFeature.HISTORY,DefaultFeature.MODEL_EDITING,TaskBoard.instance}
+		},new User.Feature[]{DefaultFeature.HISTORY,DefaultFeature.MODEL_EDITING,TaskBoard.instance,ShiftTaskBoard.instance}
 	);
 
 	ApplicationRole(Permission[]permissions,User.Feature[]features){
