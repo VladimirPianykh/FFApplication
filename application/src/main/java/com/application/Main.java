@@ -3,6 +3,7 @@ package com.application;
 import com.application.access.ApplicationRole;
 import com.application.order.Order;
 import com.application.order.OrderStatus;
+import com.application.shift.ShiftTask;
 import com.application.workshop.WorkArea;
 import com.application.workshop.Workshop;
 import com.application.workshop.manager.WorkAreaManager;
@@ -27,6 +28,7 @@ public class Main{
 		EditableGroup<Workshop>workshops=null;
 		EditableGroup<TimberProductTask>productionTasks=null;
 		EditableGroup<PreparationTask>preparationTasks=null;
+		EditableGroup<ShiftTask>shiftTasks=null;
 		boolean firstLaunch=ProgramStarter.isFirstLaunch();
 		if(firstLaunch){
 			//Регистрация служб
@@ -86,12 +88,14 @@ public class Main{
 				new PathIcon("ui/order_add.png",Root.SCREEN_SIZE.width/20,Root.SCREEN_SIZE.width/20),
 				PreparationTask.class
 			);
+			shiftTasks=new EditableGroup<ShiftTask>(ShiftTask.class);
 			Registrator.register(customers);
 			Registrator.register(productTypes);
 			Registrator.register(orders);
 			Registrator.register(workshops);
 			Registrator.register(productionTasks);
 			Registrator.register(preparationTasks);
+			Registrator.register(shiftTasks);
 		}
 		ProgramStarter.welcomeMessage="Добро пожаловать в \"Лесозавод №10 Белка\".\nВыберите службу,чтобы продолжить.";
 		ProgramStarter.authRequired=false;
