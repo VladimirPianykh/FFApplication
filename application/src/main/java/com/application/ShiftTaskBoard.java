@@ -2,7 +2,6 @@ package com.application;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -11,7 +10,11 @@ import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
+
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -24,8 +27,10 @@ import com.futurefactory.Data;
 import com.futurefactory.HButton;
 import com.futurefactory.ProgramStarter;
 import com.futurefactory.Root;
+import com.futurefactory.Wrapper;
 import com.futurefactory.Data.EditableGroup;
 import com.futurefactory.User.Feature;
+import com.toedter.calendar.JDateChooser;
 
 /**
  * Рабочий стол для заданий на смену.
@@ -35,6 +40,7 @@ public class ShiftTaskBoard implements Feature{
 	public static final ShiftTaskBoard instance=new ShiftTaskBoard();
 	@SuppressWarnings("unchecked")
 	public void fillTab(JPanel content,JPanel tab,Font font){
+		Wrapper<LocalDate>ld=new Wrapper<LocalDate>(null);
 		JPanel taskPanel=new JPanel(new GridLayout(0,1));
 		JScrollPane s=new JScrollPane(taskPanel){
 			public void paint(Graphics g){
@@ -99,7 +105,6 @@ public class ShiftTaskBoard implements Feature{
 		});
 		for(ShiftTask t:(EditableGroup<ShiftTask>)Data.getInstance().getGroup(ShiftTask.class)){TaskButton b=new TaskButton(t);taskPanel.add(b);}
 		taskPanel.doLayout();
-		// for(Component c:taskPanel.getComponents())c.setFont(new Font(Font.DIALOG,Font.PLAIN,c.getHeight()/2));
 		JPanel areaPanel=new JPanel();
 		areaPanel.setBounds(tab.getWidth()*7/10,tab.getHeight()/10,tab.getWidth()/5,tab.getHeight()*4/5);
 		areaPanel.setBackground(Color.DARK_GRAY);
@@ -118,8 +123,7 @@ public class ShiftTaskBoard implements Feature{
 				FontMetrics fm=g2.getFontMetrics();
 				g2.setColor(Color.WHITE);
 				g2.drawString(w.name,(getWidth()-fm.stringWidth(w.name))/2,getHeight()/10+fm.getAscent()+fm.getLeading()-fm.getDescent());
-				//TODO: add date choice
-				String s=w.performance==Integer.MAX_VALUE?"неограничено":(w.performance-WorkAreaShiftManager.getPerformanceOccupied(w,LocalDate.now()))+"/"+w.performance;
+				String s=w.performance==Integer.MAX_VALUE?"неограничено":(w.performance-WorkAreaShiftManager.getPerformanceOccupied(w,ld.var))+"/"+w.performance;
 				g2.drawString(s,(getWidth()-fm.stringWidth(s))/2,(getHeight()+fm.getAscent()+fm.getLeading()-fm.getDescent())/2);
 				g2.setStroke(new BasicStroke(getHeight()/20));
 				g2.drawRoundRect(0,0,getWidth(),getHeight(),getHeight()/10,getHeight()/10);
@@ -127,6 +131,17 @@ public class ShiftTaskBoard implements Feature{
 		}
 		for(Workshop w:(EditableGroup<Workshop>)Data.getInstance().getGroup(Workshop.class))for(WorkArea p:w.parts)areaPanel.add(new AreaLabel(p));
 		areaPanel.revalidate();
+		JDateChooser d=new JDateChooser();
+		d.setDateFormatString("yyyy-MM-dd");
+		d.setBounds(tab.getWidth()*7/10,tab.getHeight()*9/10,tab.getWidth()/5,tab.getHeight()/20);
+		JButton update=new JButton("Обновить");
+		update.addActionListener(e->{
+			ld.var=Instant.ofEpochMilli(d.getDate().getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
+			tab.repaint();
+		});
+		update.setBounds(tab.getWidth()*7/10,tab.getHeight()*19/20,tab.getWidth()/5,tab.getHeight()/20);
+		tab.add(update);
+		tab.add(d);
 		tab.add(addTask);
 		tab.add(s);
 		tab.add(areaPanel);

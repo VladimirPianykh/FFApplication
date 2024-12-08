@@ -2,6 +2,7 @@ package com.application.workshop;
 
 import com.application.workshop.manager.WorkAreaManager;
 import com.futurefactory.Data.Editable;
+import com.futurefactory.Wrapper;
 import com.futurefactory.editor.EditorEntry;
 import com.futurefactory.editor.EditorEntryBase;
 
@@ -11,7 +12,7 @@ import java.lang.reflect.Field;
 
 public class WorkArea extends Editable{
 	public static class WorkAreaListEditor implements EditorEntryBase{
-		public Component createEditorBase(Editable o,Field f){
+		public JComponent createEditorBase(Editable o,Field f,Wrapper<Runnable>saver){
 			JPanel p=new JPanel(new GridLayout(1,0));
 			var areas=WorkAreaManager.getAreas();
 			WorkArea[]workAreasArr=new WorkArea[areas.size()];

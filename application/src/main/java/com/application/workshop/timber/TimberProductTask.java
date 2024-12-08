@@ -10,6 +10,7 @@ import com.application.workshop.Workshop;
 import com.futurefactory.Data;
 import com.futurefactory.Data.Editable;
 import com.futurefactory.Data.EditableGroup;
+import com.futurefactory.Wrapper;
 
 import java.awt.Component;
 import java.awt.GridLayout;
@@ -19,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 @VerifiedInput(verifier=TimberProductTask.Verifier.class)
@@ -51,7 +53,7 @@ public class TimberProductTask extends Data.Editable{
 	}
 	public static class WorkshopListEditor implements EditorEntryBase{
 		@SuppressWarnings("unchecked")
-		public Component createEditorBase(Editable o,Field f){
+		public JComponent createEditorBase(Editable o,Field f,Wrapper<Runnable>saver){
 			try{
 				JPanel p=new JPanel(new GridLayout(1,0));
 				List<Workshop>l=(List<Workshop>)f.get(o);
