@@ -4,6 +4,8 @@ import com.application.access.ApplicationRole;
 import com.application.order.Order;
 import com.application.order.OrderStatus;
 import com.application.shift.ShiftTask;
+import com.application.workers.Team;
+import com.application.workers.TeamDater;
 import com.application.workshop.WorkArea;
 import com.application.workshop.Workshop;
 import com.application.workshop.manager.WorkAreaManager;
@@ -13,6 +15,7 @@ import com.application.workshop.timber.TimberProductTask;
 import com.futurefactory.*;
 import com.futurefactory.Data.Editable;
 import com.futurefactory.Data.EditableGroup;
+import com.futurefactory.defaults.features.TimeTable;
 
 import java.awt.*;
 import java.time.LocalDate;
@@ -21,6 +24,7 @@ import java.util.Arrays;
 import javax.swing.*;
 
 public class Main{
+	@SuppressWarnings("unchecked")
 	public static void main(String[]args){
 		EditableGroup<Customer>customers=null;
 		EditableGroup<ProductType>productTypes=null;
@@ -35,6 +39,7 @@ public class Main{
 			User.register("Коммерческая служба","pass").role=ApplicationRole.COMMERCIAL_SERVICE;
 			User.register("Служба производства","pass").role=ApplicationRole.PRODUCTION_SERVICE;
 			User.register("Служба технолога","pass").role=ApplicationRole.TECH_SERVICE;
+			User.register("Управление персоналом","pass").role=ApplicationRole.WORKERS_SERVICE;
 			//Регистрация групп элементов
 			customers=new EditableGroup<Customer>(
 				new PathIcon("ui/customer.png",Root.SCREEN_SIZE.width/20,Root.SCREEN_SIZE.width/20),
@@ -96,6 +101,7 @@ public class Main{
 			Registrator.register(productionTasks);
 			Registrator.register(preparationTasks);
 			Registrator.register(shiftTasks);
+			// Registrator.register(EditableList.getList("Сотрудники").getGroup());
 		}
 		ProgramStarter.welcomeMessage="Добро пожаловать в \"Лесозавод №10 Белка\".\nВыберите службу,чтобы продолжить.";
 		ProgramStarter.authRequired=false;
@@ -132,7 +138,7 @@ public class Main{
 					new WorkArea("Линия строжки №1",50),
 					new WorkArea("Линия строжки №2",80),
 					new WorkArea("Линия строжки №3",100)
-				}
+				}	
 			));
 			workshops.add(new Workshop("Пеллетный цех",
 				new WorkArea[]{
@@ -153,5 +159,6 @@ public class Main{
 			//Сохранение изменений для участков
 			WorkAreaManager.save();
 		}
+		((TimeTable<Team>)TimeTable.getTable("Расписание")).setDateProvider(()->new TeamDater());
 	}
 }

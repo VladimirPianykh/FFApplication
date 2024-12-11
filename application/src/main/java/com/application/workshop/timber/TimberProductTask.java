@@ -53,7 +53,7 @@ public class TimberProductTask extends Data.Editable{
 	}
 	public static class WorkshopListEditor implements EditorEntryBase{
 		@SuppressWarnings("unchecked")
-		public JComponent createEditorBase(Editable o,Field f,Wrapper<Runnable>saver){
+		public JComponent createEditorBase(Object o,Field f,Wrapper<Runnable>saver){
 			try{
 				JPanel p=new JPanel(new GridLayout(1,0));
 				List<Workshop>l=(List<Workshop>)f.get(o);

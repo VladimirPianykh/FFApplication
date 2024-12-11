@@ -28,7 +28,6 @@ import com.futurefactory.HButton;
 import com.futurefactory.ProgramStarter;
 import com.futurefactory.Root;
 import com.futurefactory.Wrapper;
-import com.futurefactory.Data.EditableGroup;
 import com.futurefactory.User.Feature;
 import com.toedter.calendar.JDateChooser;
 
@@ -38,7 +37,6 @@ import com.toedter.calendar.JDateChooser;
  */
 public class ShiftTaskBoard implements Feature{
 	public static final ShiftTaskBoard instance=new ShiftTaskBoard();
-	@SuppressWarnings("unchecked")
 	public void fillTab(JPanel content,JPanel tab,Font font){
 		Wrapper<LocalDate>ld=new Wrapper<LocalDate>(null);
 		JPanel taskPanel=new JPanel(new GridLayout(0,1));
@@ -103,7 +101,7 @@ public class ShiftTaskBoard implements Feature{
 			tab.repaint();
 			Data.save();
 		});
-		for(ShiftTask t:(EditableGroup<ShiftTask>)Data.getInstance().getGroup(ShiftTask.class)){TaskButton b=new TaskButton(t);taskPanel.add(b);}
+		for(ShiftTask t:Data.getInstance().getGroup(ShiftTask.class)){TaskButton b=new TaskButton(t);taskPanel.add(b);}
 		taskPanel.doLayout();
 		JPanel areaPanel=new JPanel();
 		areaPanel.setBounds(tab.getWidth()*7/10,tab.getHeight()/10,tab.getWidth()/5,tab.getHeight()*4/5);
@@ -129,7 +127,7 @@ public class ShiftTaskBoard implements Feature{
 				g2.drawRoundRect(0,0,getWidth(),getHeight(),getHeight()/10,getHeight()/10);
 			}
 		}
-		for(Workshop w:(EditableGroup<Workshop>)Data.getInstance().getGroup(Workshop.class))for(WorkArea p:w.parts)areaPanel.add(new AreaLabel(p));
+		for(Workshop w:Data.getInstance().getGroup(Workshop.class))for(WorkArea p:w.parts)areaPanel.add(new AreaLabel(p));
 		areaPanel.revalidate();
 		JDateChooser d=new JDateChooser();
 		d.setDateFormatString("yyyy-MM-dd");

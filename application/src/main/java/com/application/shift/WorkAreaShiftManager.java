@@ -20,9 +20,7 @@ public class WorkAreaShiftManager {
     //Нигде не используется, но пусть будет
     public static List<LocalDate> getReservedDates(WorkArea area) {
         List<LocalDate> result = new LinkedList<>();
-
-        @SuppressWarnings("unchecked")
-        EditableGroup<ShiftTask>tasks=(EditableGroup<ShiftTask>)Data.getInstance().getGroup(ShiftTask.class);
+        EditableGroup<ShiftTask>tasks=Data.getInstance().getGroup(ShiftTask.class);
         for (ShiftTask task : tasks) {
             if (task.workArea.equals(area)) {
                 result.add(task.shiftDate);
@@ -37,8 +35,7 @@ public class WorkAreaShiftManager {
      * @return (количество уже занятых единиц + task.quantity >= 0)
      */
     public static boolean quantityMatchesLimit(ShiftTask task) {
-        @SuppressWarnings("unchecked")
-        EditableGroup<ShiftTask>tasks=(EditableGroup<ShiftTask>)Data.getInstance().getGroup(ShiftTask.class);
+        EditableGroup<ShiftTask>tasks=Data.getInstance().getGroup(ShiftTask.class);
 
         int availablePerf = task.workArea.performance;
 
@@ -61,8 +58,7 @@ public class WorkAreaShiftManager {
      * @return Список участков для которых есть хоть 1 свободная единица производства
      */
     public static List<WorkArea> getNotReservedAreas(LocalDate date) {
-        @SuppressWarnings("unchecked")
-        EditableGroup<ShiftTask>tasks=(EditableGroup<ShiftTask>)Data.getInstance().getGroup(ShiftTask.class);
+        EditableGroup<ShiftTask>tasks=Data.getInstance().getGroup(ShiftTask.class);
         var areas = WorkAreaManager.getAreas();
 
         HashMap<WorkArea, Integer> availableMap = new HashMap<>();
@@ -87,8 +83,7 @@ public class WorkAreaShiftManager {
         return availableAreas;
     }
     public static int getPerformanceOccupied(WorkArea workArea, LocalDate shiftDate) {
-        @SuppressWarnings("unchecked")
-        EditableGroup<ShiftTask>tasks=(EditableGroup<ShiftTask>)Data.getInstance().getGroup(ShiftTask.class);
+        EditableGroup<ShiftTask>tasks=Data.getInstance().getGroup(ShiftTask.class);
 
         int usedPerf = 0;
 

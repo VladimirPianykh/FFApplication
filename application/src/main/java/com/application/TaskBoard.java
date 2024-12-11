@@ -43,8 +43,7 @@ public class TaskBoard implements Feature{
 		subTab.setOpaque(false);
 		subTab.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));// Отступы
 		Workshop[]list;
-		@SuppressWarnings("unchecked")
-		EditableGroup<Workshop>group=(EditableGroup<Workshop>)Data.getInstance().getGroup(Workshop.class);
+		EditableGroup<Workshop>group=Data.getInstance().getGroup(Workshop.class);
 		if(group==null)throw new RuntimeException("Не найдены цеха");
 		list=new Workshop[group.size()];
 		for(int i=0;i<group.size();++i)list[i]=(Workshop)group.get(i);

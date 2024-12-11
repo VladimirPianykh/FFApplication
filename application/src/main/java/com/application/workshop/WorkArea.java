@@ -12,7 +12,7 @@ import java.lang.reflect.Field;
 
 public class WorkArea extends Editable{
 	public static class WorkAreaListEditor implements EditorEntryBase{
-		public JComponent createEditorBase(Editable o,Field f,Wrapper<Runnable>saver){
+		public JComponent createEditorBase(Object o,Field f,Wrapper<Runnable>saver){
 			JPanel p=new JPanel(new GridLayout(1,0));
 			var areas=WorkAreaManager.getAreas();
 			WorkArea[]workAreasArr=new WorkArea[areas.size()];
