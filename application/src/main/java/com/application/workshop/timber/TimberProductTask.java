@@ -26,29 +26,23 @@ import javax.swing.JPanel;
 @VerifiedInput(verifier=TimberProductTask.Verifier.class)
 public class TimberProductTask extends Data.Editable{
 	public static class Verifier implements com.futurefactory.editor.Verifier{
-		public boolean verify(Editable editable,boolean isNew){
+		public String verify(Editable editable,boolean isNew){
 			TimberProductTask e=(TimberProductTask)editable;
 			if(e.registrationDate==null||e.startDate==null){
-				System.err.println("Дата регистрации и дата начала производства не могут быть null.");
-				return false;
+				return "Дата регистрации и дата начала производства не могут быть null.";
 			}else if(!e.startDate.isAfter(e.registrationDate)){
-				System.err.println("Дата начала производства должна быть позже даты регистрации.");
-				return false;
+				return "Дата начала производства должна быть позже даты регистрации.";
 			}else if(e.order==null||(isNew&&e.order.status!=OrderStatus.APPROVED)){
-				System.err.println("Задание на производство можно зарегистрировать только по заказу со статусом 'Согласовано клиентом'.");
-				return false;
+				return "Задание на производство можно зарегистрировать только по заказу со статусом \"Согласовано клиентом\".";
 			}else if(e.productType==null){
-				System.err.println("Вид лесопродукции должен быть указан.");
-				return false;
+				return "Вид лесопродукции должен быть указан.";
 			}else if(e.quantity<=0){
-				System.err.println("Количество лесопродукции должно быть больше нуля.");
-				return false;
+				return "Количество лесопродукции должно быть больше нуля.";
 			}else if(e.productionWorkshops==null||e.productionWorkshops.isEmpty()){
-				System.err.println("Необходимо указать цеха для изготовления лесопродукции.");
-				return false;
+				return "Необходимо указать цеха для изготовления лесопродукции.";
 			}
 			e.order.status=OrderStatus.IN_PRODUCTION;
-			return true;
+			return "";
 		}
 	}
 	public static class WorkshopListEditor implements EditorEntryBase{
@@ -57,11 +51,7 @@ public class TimberProductTask extends Data.Editable{
 			try{
 				JPanel p=new JPanel(new GridLayout(1,0));
 				List<Workshop>l=(List<Workshop>)f.get(o);
-				for(Workshop w:(EditableGroup<Workshop>)Data.getInstance().getGroup(Workshop.class)){
-					JCheckBox b=new JCheckBox(w.name);
-					b.setSelected(l.contains(w));
-					p.add(b);
-				}
+				for(Workshop w:(EditableGroup<Workshop>)Data.getInstance().getGroup(Workshop.class)){JCheckBox b=new JCheckBox(w.name);b.setSelected(l.contains(w));p.add(b);}
 				for(Component c:p.getComponents()){
 					((JCheckBox)c).addActionListener(e->{
 						List<Workshop>list=new ArrayList<Workshop>();

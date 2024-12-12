@@ -15,7 +15,7 @@ import com.application.workshop.Workshop;
 import com.futurefactory.Data;
 import com.futurefactory.Wrapper;
 import com.futurefactory.defaults.editorbases.SelectionListEditor;
-import com.futurefactory.defaults.features.TimeTable;
+import com.futurefactory.defaults.features.DatedList;
 import com.futurefactory.editor.EditorEntry;
 import com.futurefactory.editor.EditorEntryBase;
 import com.futurefactory.editor.VerifiedInput;
@@ -23,23 +23,24 @@ import com.futurefactory.editor.VerifiedInput;
 @VerifiedInput(verifier=Team.Verifier.class)
 public class Team extends Editable{
 	public static class Verifier implements com.futurefactory.editor.Verifier{
-		public boolean verify(Editable e,boolean isNew){
+		public String verify(Editable e,boolean isNew){
 			Team t=(Team)e;
-			if(t.master==null||!t.workers.contains(t.master))return false;
-			@SuppressWarnings("unchecked")
-			Set<Team>group=((TimeTable<Team>)TimeTable.getTable("Расписание")).getObjects();
+			if(t.master==null)return "Мастер не выбран.";
+			if(t.workers==null)return "Цех не выбран.";
+			if(!t.workers.contains(t.master))return "Выбранный мастер не входит в бригаду.";
+			Set<Team>group=DatedList.<Team>getList("Расписание").getObjects();
 			for(Team g:group){
 				if(g==t)continue;
-				for(Worker w:t.workers)if(g.workers.contains(w))return false;
+				for(Worker w:t.workers)if(g.workers.contains(w))return "Рабочий "+w.name+" уже входит в бригаду \""+g.name+"\".";
 			}
-			for(Worker w:t.workers)if(!Arrays.asList(w.workshop.parts).contains(t.area))return false;
-			for(Team g:group)if(g.area==t.area){
-				if(g.mode!=t.mode)return false;
+			for(Worker w:t.workers)if(!Arrays.asList(w.workshop.parts).contains(t.area))return "Рабочий "+w.name+" работает в цехе \""+w.workshop.name+"\".";
+			for(Team g:group)if(g.area==t.area&&g!=t){
+				if(g.mode!=t.mode)return "Расписания бригад \""+g.name+"\" и \""+t.name+"\" пересекаются.";
 				if(t.mode==Mode.ONE){
-					if(Math.abs(ChronoUnit.DAYS.between(g.startDate,t.startDate))%2==0)return false;
-				}else if(Math.abs(ChronoUnit.DAYS.between(g.startDate,t.startDate))%4!=2)return false;
+					if(Math.abs(ChronoUnit.DAYS.between(g.startDate,t.startDate))%2==0)return "Расписания бригад \""+g.name+"\" и \""+t.name+"\" пересекаются.";
+				}else if(Math.abs(ChronoUnit.DAYS.between(g.startDate,t.startDate))%4!=2)return "Расписания бригад \""+g.name+"\" и \""+t.name+"\" пересекаются.";
 			}
-			return true;
+			return "";
 		}
 	}
 	public static class WorkAreaSelector implements EditorEntryBase{
@@ -48,6 +49,7 @@ public class Team extends Editable{
 			for(Workshop s:Data.getInstance().getGroup(Workshop.class)){
 				for(WorkArea w:s.parts)c.addItem(w);
 			}
+			try{c.setSelectedItem(f.get(o));}catch(IllegalAccessException ex){throw new RuntimeException(ex);}
 			saver.var=()->{try{f.set(o,c.getSelectedItem());}catch(IllegalAccessException ex){throw new RuntimeException(ex);}};
 			return c;
 		}

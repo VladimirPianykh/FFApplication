@@ -70,12 +70,13 @@ public class ShiftTask extends Data.Editable {
 	 */
 	public static class Verifier implements com.futurefactory.editor.Verifier {
 		@Override
-		public boolean verify(Data.Editable editable, boolean isNew) {
+		public String verify(Data.Editable editable, boolean isNew) {
 			ShiftTask task = (ShiftTask) editable;
-			return task.shiftDate != null
-					&& task.productType != null
-					&& task.workArea != null
-					&& WorkAreaShiftManager.quantityMatchesLimit(task);
+			if(task.shiftDate==null)return "Не задана дата смены.";
+			if(task.productType==null)return "Не выбран тип продукта.";
+			if(task.workArea==null)return "Не выбран рабочий участок.";
+			if(!WorkAreaShiftManager.quantityMatchesLimit(task))return "Превышено ограничение производительности.";
+			return "";
 		}
 	}
 

@@ -13,7 +13,11 @@ import java.time.LocalDate;
 public class Order extends Data.Editable{
 	public static class Verifier implements com.futurefactory.editor.Verifier{
 		@Override
-		public boolean verify(Editable editable,boolean isNew){Order e=(Order)editable;return e.requiredDate.isAfter(e.registrationDate);}
+		public String verify(Editable editable,boolean isNew){
+			Order e=(Order)editable;
+			if(e.customerInfo==null)return "Клиент не выбран";
+			return e.requiredDate.isAfter(e.registrationDate)?"":"Дата регистрации должна быть раньше даты окончания.";
+		}
 	}
 	@EditorEntry(translation="Дата регистрации")public LocalDate registrationDate;
 	@EditorEntry(translation="Дата окончания")public LocalDate requiredDate;

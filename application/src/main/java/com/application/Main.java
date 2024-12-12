@@ -6,6 +6,8 @@ import com.application.order.OrderStatus;
 import com.application.shift.ShiftTask;
 import com.application.workers.Team;
 import com.application.workers.TeamDater;
+import com.application.workers.TeamType;
+import com.application.workers.Worker;
 import com.application.workshop.WorkArea;
 import com.application.workshop.Workshop;
 import com.application.workshop.manager.WorkAreaManager;
@@ -15,16 +17,19 @@ import com.application.workshop.timber.TimberProductTask;
 import com.futurefactory.*;
 import com.futurefactory.Data.Editable;
 import com.futurefactory.Data.EditableGroup;
-import com.futurefactory.defaults.features.TimeTable;
+import com.futurefactory.defaults.features.EditableList;
+import com.futurefactory.defaults.features.Board;
+import com.futurefactory.defaults.features.DatedList;
 
 import java.awt.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 
 public class Main{
-	@SuppressWarnings("unchecked")
 	public static void main(String[]args){
 		EditableGroup<Customer>customers=null;
 		EditableGroup<ProductType>productTypes=null;
@@ -151,14 +156,88 @@ public class Main{
 			productionTasks.add(new TimberProductTask(LocalDate.now().plusDays(3),orders.get(0),productTypes.get(0),3,Arrays.asList(new Workshop[]{workshops.get(0)}),""));
 			productionTasks.add(new TimberProductTask(LocalDate.now().plusDays(3),orders.get(1),productTypes.get(1),3,Arrays.asList(new Workshop[]{workshops.get(0),workshops.get(1)}),""));
 			productionTasks.add(new TimberProductTask(LocalDate.now().plusDays(3),orders.get(2),productTypes.get(2),3,Arrays.asList(new Workshop[]{workshops.get(0),workshops.get(1),workshops.get(2)}),""));
-			for(WorkArea area:workshops.get(0).parts) preparationTasks.add(new PreparationTask(LocalDate.now().plusDays(1),productionTasks.get(0),area,"Описание1",WorkshopPrepStatus.CREATED));
-			for(WorkArea area:workshops.get(1).parts) preparationTasks.add(new PreparationTask(LocalDate.now().plusDays(1),productionTasks.get(1),area,"Описание2",WorkshopPrepStatus.CREATED));
-			for(WorkArea area:workshops.get(2).parts) preparationTasks.add(new PreparationTask(LocalDate.now().plusDays(1),productionTasks.get(2),area,"Описание3",WorkshopPrepStatus.CREATED));
-			for(WorkArea area:workshops.get(3).parts) preparationTasks.add(new PreparationTask(LocalDate.now().plusDays(1),productionTasks.get(2),area,"Описание4",WorkshopPrepStatus.CREATED));
+			for(WorkArea area:workshops.get(0).parts)preparationTasks.add(new PreparationTask(LocalDate.now().plusDays(1),productionTasks.get(0),area,"Описание1",WorkshopPrepStatus.CREATED));
+			for(WorkArea area:workshops.get(1).parts)preparationTasks.add(new PreparationTask(LocalDate.now().plusDays(1),productionTasks.get(1),area,"Описание2",WorkshopPrepStatus.CREATED));
+			for(WorkArea area:workshops.get(2).parts)preparationTasks.add(new PreparationTask(LocalDate.now().plusDays(1),productionTasks.get(2),area,"Описание3",WorkshopPrepStatus.CREATED));
+			for(WorkArea area:workshops.get(3).parts)preparationTasks.add(new PreparationTask(LocalDate.now().plusDays(1),productionTasks.get(2),area,"Описание4",WorkshopPrepStatus.CREATED));
+			Team t1=DatedList.<Team>getList("Расписание").createObject();
+			t1.name="Распиловка";
+			t1.type=TeamType.SAWING;
+			t1.area=workshops.get(0).parts[0];
+			for(int i=1;i<=4;++i){
+				Worker w=EditableList.<Worker>getList("Сотрудники").createObject();
+				w.name="Сотрудник "+i;
+				w.workshop=workshops.get(0);
+				t1.workers.add(w);
+				t1.master=w;
+			}
+			Team t2=DatedList.<Team>getList("Расписание").createObject();
+			t2.name="Сушка";
+			t2.type=TeamType.DRYING;
+			t2.area=workshops.get(1).parts[0];
+			for(int i=5;i<=8;++i){
+				Worker w=EditableList.<Worker>getList("Сотрудники").createObject();
+				w.name="Сотрудник "+i;
+				w.workshop=workshops.get(1);
+				t2.workers.add(w);
+				t2.master=w;
+			}
+			Team t3=DatedList.<Team>getList("Расписание").createObject();
+			t3.name="Дообработка";
+			t1.type=TeamType.PROCESSING;
+			t3.area=workshops.get(2).parts[0];
+			t3.mode=Team.Mode.TWO;
+			for(int i=9;i<=12;++i){
+				Worker w=EditableList.<Worker>getList("Сотрудники").createObject();
+				w.name="Сотрудник "+i;
+				w.workshop=workshops.get(2);
+				t3.workers.add(w);
+				t3.master=w;
+			}
+			shiftTasks.add(new ShiftTask(productTypes.get(0),3,LocalDate.now(),workshops.get(0).parts[0],""));
 			Data.save();
 			//Сохранение изменений для участков
 			WorkAreaManager.save();
 		}
-		((TimeTable<Team>)TimeTable.getTable("Расписание")).setDateProvider(()->new TeamDater());
+		DatedList.<Team>getList("Расписание").setDateProvider(()->new TeamDater());
+		Board.<TimeTableEntry>getBoard("Просмотр расписания")
+			.setElementSupplier(()->{
+				ArrayList<TimeTableEntry>a=new ArrayList<>();
+				for(Team t:DatedList.<Team>getList("Расписание").getObjects())a.add(new TimeTableEntry(t));
+				return a;
+			})
+			.setFilter(new Board.Filter<TimeTableEntry>(){
+				static class W extends Wrapper<Worker>{
+					public W(Worker w){super(w);}
+					public String toString(){return var==null?"Все":var.name;}
+				}
+				static class S extends Wrapper<Workshop>{
+					public S(Workshop w){super(w);}
+					public String toString(){return var==null?"Все":var.name;}
+				}
+				private JComboBox<W>workerBox=new JComboBox<>();
+				private JComboBox<S>workshopBox=new JComboBox<>();
+				public JComponent getConfigurator(Runnable saver,ArrayList<TimeTableEntry>objects){
+					workerBox.setBorder(BorderFactory.createTitledBorder("Сотрудник"));
+					workerBox.addItem(new W(null));
+					for(Worker w:Data.getInstance().getGroup(Worker.class))workerBox.addItem(new W(w));
+					workerBox.addItemListener(e->saver.run());
+					workshopBox.setBorder(BorderFactory.createTitledBorder("Цех"));
+					workshopBox.addItem(new S(null));
+					for(Workshop w:Data.getInstance().getGroup(Workshop.class))workshopBox.addItem(new S(w));
+					workshopBox.addItemListener(e->saver.run());
+					JPanel p=new JPanel(new GridLayout(1,2));
+					p.add(workerBox);
+					p.add(workshopBox);
+					return p;
+				}
+				public boolean test(TimeTableEntry t){
+					Worker w=((W)workerBox.getSelectedItem()).var;
+					Workshop s=((S)workshopBox.getSelectedItem()).var;
+					return(w==null||t.team.workers.contains(w))&&(s==null||Arrays.asList(s.parts).contains(t.area));
+				}
+			})
+			.addTableDecorator(t->t.setDefaultEditor(Object.class,null))
+			.addTableDecorator(t->t.setDefaultRenderer(Object.class,new FieldCellRenderer()));
 	}
 }

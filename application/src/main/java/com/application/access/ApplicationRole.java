@@ -6,6 +6,7 @@ import javax.swing.SwingUtilities;
 
 import com.application.ShiftTaskBoard;
 import com.application.TaskBoard;
+import com.application.TimeTableEntry;
 import com.application.workers.Team;
 import com.application.workers.Worker;
 import com.futurefactory.Registrator;
@@ -16,7 +17,8 @@ import com.futurefactory.PathIcon;
 import com.futurefactory.User.Permission;
 import com.futurefactory.defaults.features.DefaultFeature;
 import com.futurefactory.defaults.features.EditableList;
-import com.futurefactory.defaults.features.TimeTable;
+import com.futurefactory.defaults.features.Board;
+import com.futurefactory.defaults.features.DatedList;
 
 public enum ApplicationRole implements User.Role{
 	COMMERCIAL_SERVICE(
@@ -49,11 +51,11 @@ public enum ApplicationRole implements User.Role{
 		},()->new User.Feature[]{DefaultFeature.HISTORY,DefaultFeature.MODEL_EDITING,TaskBoard.instance,ShiftTaskBoard.instance}
 	),WORKERS_SERVICE(
 		new ApplicationPermission[]{},
-		()->new User.Feature[]{DefaultFeature.MODEL_EDITING,EditableList.registerList("Сотрудники",new EditableGroup<Worker>(
+		()->new User.Feature[]{EditableList.registerList("Сотрудники",new EditableGroup<Worker>(
 			new PathIcon("ui/worker.png",Root.SCREEN_SIZE.height/11,Root.SCREEN_SIZE.height/11),
 			new PathIcon("ui/worker_add.png",Root.SCREEN_SIZE.height/11,Root.SCREEN_SIZE.height/11),
 			Worker.class
-		).hide()),TimeTable.registerTable("Расписание",Team.class)}
+		).hide()),DatedList.registerList("Расписание",Team.class),Board.registerBoard("Просмотр расписания",TimeTableEntry.class)}
 	);
 	ApplicationRole(Permission[]permissions,Supplier<User.Feature[]>features){
 		SwingUtilities.invokeLater(()->Registrator.register(this,features.get(),permissions));
