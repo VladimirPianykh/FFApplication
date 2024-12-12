@@ -19,7 +19,7 @@ public class WorkArea extends Editable{
 			for(int i=0;i<areas.size();i++)workAreasArr[i]=areas.get(i);
 			JComboBox<WorkArea>areaJComboBox=new JComboBox<>(workAreasArr);
 			areaJComboBox.addActionListener(e->{
-				try{f.set(o,new WorkArea[]{(WorkArea)areaJComboBox.getSelectedItem()});}
+				try{f.set(o,areaJComboBox.getSelectedItem());}
 				catch(IllegalAccessException ex){throw new RuntimeException(ex);}
 			});
 			p.add(areaJComboBox);

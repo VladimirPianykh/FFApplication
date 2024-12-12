@@ -14,9 +14,12 @@ public class Order extends Data.Editable{
 	public static class Verifier implements com.futurefactory.editor.Verifier{
 		@Override
 		public String verify(Editable editable,boolean isNew){
-			Order e=(Order)editable;
-			if(e.customerInfo==null)return "Клиент не выбран";
-			return e.requiredDate.isAfter(e.registrationDate)?"":"Дата регистрации должна быть раньше даты окончания.";
+			Order order=(Order)editable;
+			if(order.status == OrderStatus.APPROVED && (order.customerInfo == null || order.productType == null || order.quantity <= 0))
+				return "Заказ в статусе 'Согласован с клиентом' должен быть полностью заполнен";
+
+			if(order.customerInfo==null)return "Клиент не выбран";
+			return order.requiredDate.isAfter(order.registrationDate)?"":"Дата регистрации должна быть раньше даты окончания.";
 		}
 	}
 	@EditorEntry(translation="Дата регистрации")public LocalDate registrationDate;

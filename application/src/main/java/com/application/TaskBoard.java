@@ -68,7 +68,7 @@ public class TaskBoard implements Feature{
 			Workshop selectedWorkshop=(Workshop)finalWorkshops.getSelectedItem();
 			for(WorkArea area:selectedWorkshop.parts){
 				for(var prepTask:tasks){
-					if(prepTask.workArea.equals(area)){
+					if(area.equals(prepTask.workArea)){
 						tableModel.addRow(new Object[]{
 								prepTask.preparationDate,
 								prepTask.preparationDetails,
@@ -101,7 +101,9 @@ public class TaskBoard implements Feature{
 			LocalDate preparationDate=(LocalDate)table.getValueAt(row,0);
 			LocalDate startProductionDate=LocalDate.now();// Replace with actual production LocalDate logic
 			// Highlight rows based on LocalDate comparison
-			if(preparationDate.equals(startProductionDate))c.setBackground(Color.RED);else if(preparationDate.equals(startProductionDate.minusDays(1))){
+			if(preparationDate.isEqual(startProductionDate))
+				c.setBackground(Color.RED);
+			else if(preparationDate.isEqual(startProductionDate.minusDays(1))){
 				c.setBackground(Color.YELLOW);
 			}else{c.setBackground(Color.WHITE);}
 			return c;

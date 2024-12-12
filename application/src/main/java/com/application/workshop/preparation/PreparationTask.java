@@ -4,9 +4,13 @@ import com.futurefactory.Data;
 import com.futurefactory.editor.EditorEntry;
 import com.application.workshop.WorkArea;
 import com.application.workshop.timber.TimberProductTask;
+import com.futurefactory.editor.VerifiedInput;
+import com.futurefactory.editor.Verifier;
 
+import java.lang.annotation.Inherited;
 import java.time.LocalDate;
 
+@VerifiedInput(verifier = PreparationTask.TaskVerifier.class)
 public class PreparationTask extends Data.Editable{
 	@EditorEntry(translation="Дата регистрация")
 	public LocalDate registrationDate;
@@ -28,7 +32,6 @@ public class PreparationTask extends Data.Editable{
 							WorkshopPrepStatus status
 	){
 		super("Задание на обработку участка");
-		validateFields(registrationDate,preparationDate,productionOrder,workArea);
 		this.registrationDate=LocalDate.now();
 		this.preparationDate=preparationDate;
 		this.productionOrder=productionOrder;
@@ -46,22 +49,25 @@ public class PreparationTask extends Data.Editable{
 		this.preparationDetails="";
 		this.status=WorkshopPrepStatus.CREATED;
 	}
-	private boolean validateFields(LocalDate registrationDate,LocalDate preparationDate,
-								TimberProductTask productionOrder,WorkArea workArea){
-		//Оставил все условия из тз чтобы легче было рефакторить
-		if(registrationDate==null||preparationDate==null)return false;
-			// throw new IllegalArgumentException("Дата регистрации и дата подготовки не могут быть null.");
-		if(productionOrder==null)return false;
-			// throw new IllegalArgumentException("Задание на подготовку должно быть связано с заданием на производство.");
-		if(workArea==null||workArea.name.isEmpty())return false;
-			// throw new IllegalArgumentException("Рабочий участок должен быть указан.");
-		if(!preparationDate.isBefore(productionOrder.startDate))return false;
-			// throw new IllegalArgumentException("Подготовка участка должна быть выполнена до начала изготовления продукции.");
-		return true;
-	}
 
 	@Override
 	public String toString() {
 		return name;
+	}
+
+	public static class TaskVerifier implements Verifier {
+		@Override
+		public String verify(Data.Editable editable, boolean isNew) {
+			PreparationTask task = (PreparationTask) editable;
+			if(task.registrationDate==null||task.preparationDate==null)
+				return "Дата регистрации и дата подготовки не могут быть null.";
+			if(task.productionOrder==null)
+				return "Задание на подготовку должно быть связано с заданием на производство.";
+			if(task.workArea==null||task.workArea.name.isEmpty())
+				return "Рабочий участок должен быть указан.";
+			if(!task.preparationDate.isBefore(task.productionOrder.startDate))
+				return "Подготовка участка должна быть выполнена до начала изготовления продукции.";
+			return "";
+		}
 	}
 }
